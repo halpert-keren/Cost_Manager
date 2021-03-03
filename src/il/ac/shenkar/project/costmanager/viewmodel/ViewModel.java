@@ -6,6 +6,7 @@ import il.ac.shenkar.project.costmanager.model.CostManagerException;
 import il.ac.shenkar.project.costmanager.model.IModel;
 import il.ac.shenkar.project.costmanager.view.IView;
 
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -78,7 +79,7 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
-    public void getCostItems(String date1, String date2) {
+    public void getCostItems(Date date1, Date date2) {
         pool.submit(new Runnable() {
             @Override
             public void run() {
