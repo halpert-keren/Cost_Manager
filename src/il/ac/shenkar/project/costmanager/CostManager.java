@@ -6,13 +6,16 @@ import il.ac.shenkar.project.costmanager.viewmodel.*;
 
 public class CostManager {
     public static void main(String[] args) {
+        try {
+            IModel model = new DerbyDBModel();
+            IView view = new View();
+            IViewModel vm = new ViewModel();
 
-        IModel model = new DerbyDBModel();
-        IView view = new View();
-        IViewModel vm = new ViewModel();
-
-        view.setViewModel(vm);
-        vm.setModel(model);
-        vm.setView(view);
+            view.setViewModel(vm);
+            vm.setModel(model);
+            vm.setView(view);
+        } catch (CostManagerException e){
+            e.printStackTrace();
+        }
     }
 }

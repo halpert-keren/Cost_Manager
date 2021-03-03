@@ -10,11 +10,52 @@
 package il.ac.shenkar.project.costmanager.model;
 
 import java.sql.*;
+import java.util.Date;
 
 public class DerbyDBModel implements IModel {
     private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     private static String protocol = "jdbc:derby:";
 
+    public DerbyDBModel() throws CostManagerException {
+        Connection connection = null;
+        Statement statement = null;
+
+        try {
+            Class.forName(driver);
+
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
+            statement.execute("create table Category(" +
+                    "id INT NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                    "name VARCHAR(50) UNIQUE)");
+            statement.execute("create table CostItem(" +
+                    "id INT NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                    "description VARCHAR(200), " +
+                    "\"sum\" FLOAT, " +
+                    "date DATE, " +
+                    "category VARCHAR(50), " +
+                    "FOREIGN KEY (category) REFERENCES Category(name))");
+
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new CostManagerException(e.getMessage(), e.getCause());
+
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (Exception e) {
+                    throw new CostManagerException(e.getMessage(), e.getCause());
+
+                }
+            if (connection != null)
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    throw new CostManagerException(e.getMessage(), e.getCause());
+
+                }
+        }
+    }
 
     @Override
     public void addCostItem(CostItem item) throws CostManagerException {
@@ -57,6 +98,11 @@ public class DerbyDBModel implements IModel {
 
     @Override
     public CostItem[] getCostItems() throws CostManagerException {
+        return new CostItem[0];
+    }
+
+    @Override
+    public CostItem[] getCostItems(Date date1, Date date2) throws CostManagerException {
         return new CostItem[0];
     }
 
