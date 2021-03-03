@@ -78,6 +78,21 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
+    public void getCostItems(String date1, String date2) {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    CostItem[] items = model.getCostItems(date1, date2);
+                    view.showItems(items);
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
     public void getCategories() {
         pool.submit(new Runnable() {
             @Override

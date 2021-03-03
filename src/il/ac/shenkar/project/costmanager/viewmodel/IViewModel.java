@@ -11,6 +11,7 @@ public interface IViewModel {
     public void addCostItem(CostItem item);
     public void addCategory(Category category);
     public void getCostItems();
+    public void getCostItems(String date1, String date2);
     public void getCategories();
     public void deleteCostItem(CostItem item);
 }
