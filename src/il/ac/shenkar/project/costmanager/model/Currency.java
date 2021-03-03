@@ -1,4 +1,5 @@
 package il.ac.shenkar.project.costmanager.model;
 
-public class Currency {
+public enum Currency {
+    ILS, USD, EURO, GBP
 }
