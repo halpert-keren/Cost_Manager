@@ -1,5 +1,6 @@
 package il.ac.shenkar.project.costmanager.view;
 
+import il.ac.shenkar.project.costmanager.model.Category;
 import il.ac.shenkar.project.costmanager.model.CostItem;
 import il.ac.shenkar.project.costmanager.viewmodel.IViewModel;
 
@@ -36,8 +37,13 @@ public class View implements IView{
     }
 
     @Override
-    public void showItems(CostItem[] vec) {
-        ui.showItems(vec);
+    public void showItems(CostItem[] items) {
+        ui.showItems(items);
+    }
+
+    @Override
+    public void showCategories(Category[] categories) {
+        ui.showCategories(categories);
     }
 
 }

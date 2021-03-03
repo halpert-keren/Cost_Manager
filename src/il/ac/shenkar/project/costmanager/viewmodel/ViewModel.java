@@ -1,5 +1,6 @@
 package il.ac.shenkar.project.costmanager.viewmodel;
 
+import il.ac.shenkar.project.costmanager.model.Category;
 import il.ac.shenkar.project.costmanager.model.CostItem;
 import il.ac.shenkar.project.costmanager.model.CostManagerException;
 import il.ac.shenkar.project.costmanager.model.IModel;
@@ -35,6 +36,70 @@ public class ViewModel implements IViewModel {
                 try {
                     model.addCostItem(item);
                     view.showMessage("Cost item was added successfully");
+                    CostItem[] items = model.getCostItems();
+                    view.showItems(items);
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void addCategory(Category category) {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    model.addCategory(category);
+                    view.showMessage("Category was added successfully");
+                    Category[] categories = model.getCategories();
+                    view.showCategories(categories);
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void getCostItems() {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    CostItem[] items = model.getCostItems();
+                    view.showItems(items);
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void getCategories() {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Category[] categories = model.getCategories();
+                    view.showCategories(categories);
+                } catch (CostManagerException e) {
+                    view.showMessage(e.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void deleteCostItem(CostItem item) {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    model.deleteCostItem(item);
+                    view.showMessage("Category was added successfully");
                     CostItem[] items = model.getCostItems();
                     view.showItems(items);
                 } catch (CostManagerException e) {
