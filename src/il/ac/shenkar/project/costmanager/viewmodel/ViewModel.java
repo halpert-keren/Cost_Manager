@@ -99,7 +99,7 @@ public class ViewModel implements IViewModel {
             public void run() {
                 try {
                     model.deleteCostItem(item);
-                    view.showMessage("Category was added successfully");
+                    view.showMessage("Cost item was deleted successfully");
                     CostItem[] items = model.getCostItems();
                     view.showItems(items);
                 } catch (CostManagerException e) {

@@ -27,7 +27,7 @@ public class DerbyDBModel implements IModel {
             connection = DriverManager.getConnection(protocol);
             statement = connection.createStatement();
 
-            statement.executeUpdate("INSERT INTO " + item.getCategoryName() + " (DESCRIPTION, PRICE, CURRENCY, DATE) VALUES('" + item.getDescription() + "','" + item.getSum() + "','" + item.getCurrency() + "','" + item.getDate() + "')");
+            statement.executeUpdate("INSERT INTO " + item.getCategory() + " (DESCRIPTION, PRICE, CURRENCY, DATE) VALUES('" + item.getDescription() + "','" + item.getSum() + "','" + item.getCurrency() + "','" + item.getDate() + "')");
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException(e.getMessage(), e.getCause());
