@@ -16,6 +16,7 @@ public class View implements IView{
             @Override
             public void run() {
                 View.this.ui = new ApplicationUI();
+                View.this.ui.setViewModel(vm);
                 View.this.ui.start();
             }
         });

@@ -1,6 +1,6 @@
 package il.ac.shenkar.project.costmanager.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 public interface IModel {
 
@@ -11,10 +11,6 @@ public interface IModel {
     public Category[] getCategories() throws CostManagerException;
     public void deleteCostItem(int id) throws CostManagerException;
 
-
-
 //    public void createDB() throws CostManagerException;
 //    public void closeConnection() throws CostManagerException;
-
-
 }

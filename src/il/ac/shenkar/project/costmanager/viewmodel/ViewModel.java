@@ -6,7 +6,9 @@ import il.ac.shenkar.project.costmanager.model.CostManagerException;
 import il.ac.shenkar.project.costmanager.model.IModel;
 import il.ac.shenkar.project.costmanager.view.IView;
 
-import java.util.Date;
+import java.sql.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -79,13 +81,29 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
-    public void getCostItems(Date date1, Date date2) {
+    public void getCostItems(Date date1, Date date2, String type) {
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     CostItem[] items = model.getCostItems(date1, date2);
-                    view.showItems(items);
+                    if(type.equals("list"))
+                        view.showItems(items);
+                    else if(type.equals("pie")) {
+                        Map<String, Double> map = new HashMap<>();
+                        Category[] categories = model.getCategories();
+
+                        for (Category category: categories){
+                            map.put(category.getName(), 0.0);
+                        }
+
+                        for (CostItem item: items){
+                            double oldVal = map.get(item.getCategory().getName());
+                            map.replace(item.getCategory().getName(), oldVal + item.getSum());
+                        }
+
+                        view.displayPieChart(map);
+                    }
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -109,12 +127,12 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
-    public void deleteCostItem(CostItem item) {
+    public void deleteCostItem(int id) {
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
-                    model.deleteCostItem(item);
+                    model.deleteCostItem(id);
                     view.showMessage("Cost item was deleted successfully");
                     CostItem[] items = model.getCostItems();
                     view.showItems(items);

@@ -1,6 +1,6 @@
 package il.ac.shenkar.project.costmanager.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class CostItem {
     private String description;

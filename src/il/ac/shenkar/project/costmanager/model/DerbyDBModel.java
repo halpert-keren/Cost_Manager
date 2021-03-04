@@ -11,7 +11,7 @@ package il.ac.shenkar.project.costmanager.model;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 
 public class DerbyDBModel implements IModel {
     private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
