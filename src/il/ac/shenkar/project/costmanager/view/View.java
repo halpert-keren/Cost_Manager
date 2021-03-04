@@ -149,6 +149,7 @@ public class View implements IView {
             mainFrame.add("North", addFormArea);
             mainFrame.add("Center", itemTableArea);
             mainFrame.add("South", bottomArea);
+            mainFrame.setSize(800, 500);
 
             bottomArea.setLayout(new BoxLayout(bottomArea, BoxLayout.Y_AXIS));
             bottomArea.add(addCategoryFormArea);
@@ -187,6 +188,7 @@ public class View implements IView {
             reportsFrame.setLayout(new BorderLayout());
             reportsFrame.add("North", reportFormArea);
             reportsFrame.add("Center", reportArea);
+            reportsFrame.setSize(500, 300);
 
             reportFormArea.setLayout(new GridLayout(3, 2));
             reportFormArea.add(date1Lbl);
@@ -217,8 +219,9 @@ public class View implements IView {
                 double sum = Double.parseDouble(sumInput.getText());
                 Currency currency = (Currency) currencyListInput.getSelectedItem();
                 Date date = Date.valueOf(dateInput.getText());
-                Category category = (Category) categoryListInput.getSelectedItem();
+                Category category = new Category(categoryListInput.getSelectedItem().toString());
                 CostItem costItem = new CostItem(description, sum, currency, date, category);
+                System.out.println("AddAction");
                 vm.addCostItem(costItem);
             };
             addCostItemBtn.addActionListener(addAction);
@@ -227,33 +230,33 @@ public class View implements IView {
                 int id = Integer.parseInt(itemNoInput.getText());
                 vm.deleteCostItem(id);
             };
-            addCostItemBtn.addActionListener(deleteAction);
+            deleteCostItemBtn.addActionListener(deleteAction);
 
             ActionListener addCategoryAction = event -> {
-                String categoryName = (String) categoryListInput.getSelectedItem();
-                Category category = new Category(categoryName);
+                Category category = new Category(addCategoryInput.getText());
+                addCategoryInput.setText("");
                 vm.addCategory(category);
             };
-            addCostItemBtn.addActionListener(addCategoryAction);
+            addCategoryBtn.addActionListener(addCategoryAction);
 
             ActionListener reportAction = event -> {
                 reportsFrame.setVisible(true);
             };
-            addCostItemBtn.addActionListener(reportAction);
+            reportsBtn.addActionListener(reportAction);
 
             ActionListener listReportAction = event -> {
                 Date date1 = Date.valueOf(date1Input.getText());
                 Date date2 = Date.valueOf(date2Input.getText());
                 vm.getCostItems(date1, date2, "list");
             };
-            addCostItemBtn.addActionListener(listReportAction);
+            listReportBtn.addActionListener(listReportAction);
 
             ActionListener pieChartAction = event -> {
                 Date date1 = Date.valueOf(date1Input.getText());
                 Date date2 = Date.valueOf(date2Input.getText());
                 vm.getCostItems(date1, date2, "pie");
             };
-            addCostItemBtn.addActionListener(pieChartAction);
+            pieChartBtn.addActionListener(pieChartAction);
 
             vm.getCostItems("all");
             vm.getCostItems("report");
@@ -310,16 +313,17 @@ public class View implements IView {
         }
 
         public void showCategories(Category[] categories) {
+            categoryListInput.removeAllItems();
             if (SwingUtilities.isEventDispatchThread()) {
                 for (Category category : categories) {
-                    categoryListInput.addItem(category);
+                    categoryListInput.addItem(category.getName());
                 }
             } else {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         for (Category category : categories) {
-                            categoryListInput.addItem(category);
+                            categoryListInput.addItem(category.getName());
                         }
                     }
                 });

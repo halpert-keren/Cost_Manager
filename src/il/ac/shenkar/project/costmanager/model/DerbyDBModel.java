@@ -21,7 +21,11 @@ public class DerbyDBModel implements IModel {
         Statement statement = null;
 
         try {
-            Class.forName(driver);
+            try {
+                Class.forName(driver);
+            } catch (ClassNotFoundException e) {
+                throw new CostManagerException(e.getMessage(), e.getCause());
+            }
 
             connection = DriverManager.getConnection(protocol);
             statement = connection.createStatement();
@@ -37,9 +41,11 @@ public class DerbyDBModel implements IModel {
                     "category VARCHAR(50), " +
                     "FOREIGN KEY (category) REFERENCES Category(name))");
 
-        } catch (ClassNotFoundException | SQLException e) {
-            throw new CostManagerException(e.getMessage(), e.getCause());
-
+        } catch (SQLException e) {
+            if ("X0Y32".equals(e.getSQLState())) {
+                System.out.println("Table already exists");
+            } else
+                throw new CostManagerException(e.getMessage(), e.getCause());
         } finally {
             if (statement != null)
                 try {
@@ -69,8 +75,7 @@ public class DerbyDBModel implements IModel {
             connection = DriverManager.getConnection(protocol);
             statement = connection.createStatement();
 
-            statement.executeUpdate("INSERT INTO CostItem (description, price, currency, date_, category) VALUES('" + item.getDescription() + "','" + item.getSum() + "','" + item.getCurrency().toString() + "','" + item.getDate() + "','" + item.getCategory().getName() + "')");
-
+            statement.executeUpdate("INSERT INTO CostItem (description, price, currency, date_, category) VALUES('" + item.getDescription() + "'," + item.getSum() + ",'" + item.getCurrency().toString() + "','" + item.getDate() + "','" + item.getCategory().getName() + "')");
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException(e.getMessage(), e.getCause());
 
@@ -105,14 +110,12 @@ public class DerbyDBModel implements IModel {
             connection = DriverManager.getConnection(protocol);
             statement = connection.createStatement();
 
-            rs = statement.executeQuery("SELECT NAME FROM Category");
-
+            rs = statement.executeQuery("SELECT * FROM Category");
             while (rs.next()) {
-                if (rs.getString(1).equals(category.getName())) {
+                if (rs.getString("name").equals(category.getName())) {
                     throw new CostManagerException("category already exists.");
                 }
             }
-
             statement.execute("INSERT INTO Category (NAME) VALUES ('" + category.getName() + "')");
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -153,9 +156,12 @@ public class DerbyDBModel implements IModel {
             statement = connection.createStatement();
 
             rs = statement.executeQuery("SELECT * FROM Category");
-            rs.last();
-            Category[] categories = new Category[rs.getRow()];
-            rs.beforeFirst();
+            int count = 0;
+            while (rs.next()) {
+                count++;
+            }
+            Category[] categories = new Category[count];
+            rs = statement.executeQuery("SELECT * FROM Category");
             int i = 0;
             while (rs.next()) {
                 categories[i] = new Category(rs.getString("name"));
@@ -199,23 +205,18 @@ public class DerbyDBModel implements IModel {
             statement = connection.createStatement();
 
             rs = statement.executeQuery("SELECT * FROM CostItem");
-            rs.last();
-            CostItem[] costItems = new CostItem[rs.getRow()];
-            rs.beforeFirst();
+            int count = 0;
+            while (rs.next()) {
+                count++;
+            }
+            CostItem[] costItems = new CostItem[count];
+            rs = statement.executeQuery("SELECT * FROM CostItem");
             int i = 0;
             while (rs.next()) {
                 costItems[i] = new CostItem(rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getDate("date_"), new Category(rs.getString("category")));
                 i++;
             }
             return costItems;
-
-
-//            CostItem[] arrCost = new CostItem[];
-//            try {
-//                result = statement.executeQuery(query);
-//                while (result.next()) {
-//                    arrCost.add(new CostItem(result.getInt(1), result.getDate(2), result.getString(3), result.getString(4), result.getDouble(5), result.getString(6)));
-//                }
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException("problem with getting cost data from derbyDB", e.getCause());
         } finally {
@@ -251,9 +252,12 @@ public class DerbyDBModel implements IModel {
             statement = connection.createStatement();
 
             rs = statement.executeQuery("SELECT * FROM CostItem WHERE date_ BETWEEN DATE('" + dateStart + "') and DATE('" + dateEnd + "')");
-            rs.last();
-            CostItem[] costItems = new CostItem[rs.getRow()];
-            rs.beforeFirst();
+            int count = 0;
+            while (rs.next()) {
+                count++;
+            }
+            CostItem[] costItems = new CostItem[count];
+            rs = statement.executeQuery("SELECT * FROM CostItem WHERE date_ BETWEEN DATE('" + dateStart + "') and DATE('" + dateEnd + "')");
             int i = 0;
             while (rs.next()) {
                 costItems[i] = new CostItem(rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getDate("date_"), new Category(rs.getString("category")));
