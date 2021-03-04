@@ -10,12 +10,11 @@
 package il.ac.shenkar.project.costmanager.model;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.sql.Date;
 
 public class DerbyDBModel implements IModel {
     private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
-    private static String protocol = "jdbc:derby:";
+    private static String protocol = "jdbc:derby:CostManager;create=true";
 
     public DerbyDBModel() throws CostManagerException {
         Connection connection = null;
@@ -32,8 +31,9 @@ public class DerbyDBModel implements IModel {
             statement.execute("create table CostItem(" +
                     "id INT NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
                     "description VARCHAR(200), " +
-                    "\"sum\" FLOAT, " +
-                    "date DATE, " +
+                    "price FLOAT, " +
+                    "currency VARCHAR(5), " +
+                    "date_ DATE, " +
                     "category VARCHAR(50), " +
                     "FOREIGN KEY (category) REFERENCES Category(name))");
 
@@ -69,7 +69,7 @@ public class DerbyDBModel implements IModel {
             connection = DriverManager.getConnection(protocol);
             statement = connection.createStatement();
 
-            statement.executeUpdate("INSERT INTO " + item.getCategory() + " (DESCRIPTION, PRICE, CURRENCY, DATE) VALUES('" + item.getDescription() + "','" + item.getSum() + "','" + item.getCurrency() + "','" + item.getDate() + "')");
+            statement.executeUpdate("INSERT INTO CostItem (description, price, currency, date_, category) VALUES('" + item.getDescription() + "','" + item.getSum() + "','" + item.getCurrency().toString() + "','" + item.getDate() + "','" + item.getCategory().getName() + "')");
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException(e.getMessage(), e.getCause());
@@ -114,7 +114,6 @@ public class DerbyDBModel implements IModel {
             }
 
             statement.execute("INSERT INTO Category (NAME) VALUES ('" + category.getName() + "')");
-            statement.execute("CREATE TABLE " + category.getName() + " (price VARCHAR(30), currency VARCHAR(10), description VARCHAR(100), date TIMESTAMP) ");
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException(e.getMessage(), e.getCause());
@@ -145,6 +144,7 @@ public class DerbyDBModel implements IModel {
     public Category[] getCategories() throws CostManagerException {
         Connection connection = null;
         Statement statement = null;
+        ResultSet rs = null;
 
         try {
             Class.forName(driver);
@@ -152,7 +152,16 @@ public class DerbyDBModel implements IModel {
             connection = DriverManager.getConnection(protocol);
             statement = connection.createStatement();
 
-//            statement.executeUpdate("INSERT INTO " + item.getCategory() + " (DESCRIPTION, PRICE, CURRENCY, DATE) VALUES('" + item.getDescription() + "','" + item.getSum() + "','" + item.getCurrency() + "','" + item.getDate() + "')");
+            rs = statement.executeQuery("SELECT * FROM Category");
+            rs.last();
+            Category[] categories = new Category[rs.getRow()];
+            rs.beforeFirst();
+            int i = 0;
+            while (rs.next()) {
+                categories[i] = new Category(rs.getString("name"));
+                i++;
+            }
+            return categories;
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException(e.getMessage(), e.getCause());
@@ -182,112 +191,123 @@ public class DerbyDBModel implements IModel {
     public CostItem[] getCostItems() throws CostManagerException {
         Connection connection = null;
         Statement statement = null;
-        ResultSet result = null;
-
+        ResultSet rs = null;
 
         try {
             Class.forName(driver);
             connection = DriverManager.getConnection(protocol);
             statement = connection.createStatement();
-//            String query = "SELECT * FROM CostItem WHERE Category = '" + Category + "'";
 
-            CostItem[] arrCost = new CostItem[];
-            try {
-                result = statement.executeQuery(query);
-                while (result.next()) {
-                    arrCost.add(new CostItem(result.getInt(1), result.getDate(2), result.getString(3), result.getString(4), result.getDouble(5), result.getString(6)));
+            rs = statement.executeQuery("SELECT * FROM CostItem");
+            rs.last();
+            CostItem[] costItems = new CostItem[rs.getRow()];
+            rs.beforeFirst();
+            int i = 0;
+            while (rs.next()) {
+                costItems[i] = new CostItem(rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getDate("date_"), new Category(rs.getString("category")));
+                i++;
+            }
+            return costItems;
+
+
+//            CostItem[] arrCost = new CostItem[];
+//            try {
+//                result = statement.executeQuery(query);
+//                while (result.next()) {
+//                    arrCost.add(new CostItem(result.getInt(1), result.getDate(2), result.getString(3), result.getString(4), result.getDouble(5), result.getString(6)));
+//                }
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new CostManagerException("problem with getting cost data from derbyDB", e.getCause());
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (Exception e) {
+                    throw new CostManagerException(e.getMessage(), e.getCause());
+
                 }
-            } catch (ClassNotFoundException | SQLException e) {
-                throw new CostManagerException("problem with getting cost data from derbyDB", e.getCause());
+            if (connection != null)
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    throw new CostManagerException(e.getMessage(), e.getCause());
 
-                throw new CostManagerException(e.getMessage(), e.getCause());
-
-            } finally {
-                if (statement != null)
-                    try {
-                        statement.close();
-                    } catch (Exception e) {
-                        throw new CostManagerException(e.getMessage(), e.getCause());
-
-                    }
-                if (connection != null)
-                    try {
-                        connection.close();
-                    } catch (Exception e) {
-                        throw new CostManagerException(e.getMessage(), e.getCause());
-
-                    }
-            }
-        }
-
-        /**
-         * This method return cost items between tow dates
-         */
-        @Override
-        public CostItem[] getCostItems (Date dateStart, Date dateEnd) throws CostManagerException {
-
-            Connection connection = null;
-            Statement statement = null;
-
-            try {
-                connection = null;
-                Class.forName(driver);
-
-                connection = DriverManager.getConnection(protocol);
-                statement = connection.createStatement();
-                return ("SELECT * FROM costs WHERE date_ BETWEEN DATE('" + dateStart.toLocalDate() + "') and DATE('" + dateEnd.toLocalDate() + "')");
-
-
-            } catch (ClassNotFoundException | SQLException e) {
-                throw new CostManagerException(e.getMessage(), e.getCause());
-
-            } finally {
-                if (statement != null)
-                    try {
-                        statement.close();
-                    } catch (Exception e) {
-                    }
-                if (connection != null)
-                    try {
-                        connection.close();
-                    } catch (Exception e) {
-                    }
-            }
-
-        }
-
-
-        /**
-         * This method deleted cost items from array items objects
-         */
-        @Override
-        public void deleteCostItem (int id) throws CostManagerException {
-            Connection connection = null;
-            Statement statement = null;
-
-            try {
-                connection = null;
-                Class.forName(driver);
-
-                connection = DriverManager.getConnection(protocol);
-                statement = connection.createStatement();
-                String query = "DELETE FROM CostItem WHERE id =" + id;
-
-            } catch (ClassNotFoundException | SQLException e) {
-                throw new CostManagerException("problem to delete cost item", e.getCause());
-
-            } finally {
-                if (statement != null)
-                    try {
-                        statement.close();
-                    } catch (Exception e) {
-                    }
-                if (connection != null)
-                    try {
-                        connection.close();
-                    } catch (Exception e) {
-                    }
-            }
-
+                }
         }
     }
+
+    /**
+     * This method return cost items between tow dates
+     */
+    @Override
+    public CostItem[] getCostItems(Date dateStart, Date dateEnd) throws CostManagerException {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet rs = null;
+
+        try {
+            Class.forName(driver);
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
+
+            rs = statement.executeQuery("SELECT * FROM CostItem WHERE date_ BETWEEN DATE('" + dateStart + "') and DATE('" + dateEnd + "')");
+            rs.last();
+            CostItem[] costItems = new CostItem[rs.getRow()];
+            rs.beforeFirst();
+            int i = 0;
+            while (rs.next()) {
+                costItems[i] = new CostItem(rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getDate("date_"), new Category(rs.getString("category")));
+                i++;
+            }
+            return costItems;
+
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new CostManagerException(e.getMessage(), e.getCause());
+
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (Exception e) {
+                }
+            if (connection != null)
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                }
+        }
+
+    }
+
+    /**
+     * This method deleted cost items from array items objects
+     */
+    @Override
+    public void deleteCostItem(int id) throws CostManagerException {
+        Connection connection = null;
+        Statement statement = null;
+
+        try {
+            Class.forName(driver);
+
+            connection = DriverManager.getConnection(protocol);
+            statement = connection.createStatement();
+            statement.executeQuery ("DELETE FROM CostItem WHERE id =" + id);
+
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new CostManagerException("problem to delete cost item", e.getCause());
+
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (Exception e) {
+                }
+            if (connection != null)
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                }
+        }
+    }
+}

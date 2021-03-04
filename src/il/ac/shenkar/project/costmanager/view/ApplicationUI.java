@@ -302,13 +302,20 @@ public class ApplicationUI extends View{
         if (SwingUtilities.isEventDispatchThread()) {
             if(type.equals("all"))
                 itemTableArea = new JTable(rowData, columnNames);
-            else if (type.equals("report"))
+            else if (type.equals("report")) {
                 reportTableArea = new JTable(rowData, columnNames);
+                reportArea.add(reportTableArea);
+            }
         } else {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    itemTableArea = new JTable(rowData, columnNames);
+                    if(type.equals("all"))
+                        itemTableArea = new JTable(rowData, columnNames);
+                    else if (type.equals("report")) {
+                        reportTableArea = new JTable(rowData, columnNames);
+                        reportArea.add(reportTableArea);
+                    }
                 }
             });
         }
