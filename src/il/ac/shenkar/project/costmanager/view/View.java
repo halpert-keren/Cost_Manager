@@ -64,7 +64,6 @@ public class View implements IView {
         private JPanel addCategoryFormArea;
         private JPanel deleteFormArea;
         private JPanel feedbackArea;
-        private DefaultTableModel dm;
 
         private JLabel descriptionLbl;
         private TextField descriptionInput;
@@ -104,7 +103,6 @@ public class View implements IView {
             bottomArea = new JPanel();
             deleteFormArea = new JPanel();
             feedbackArea = new JPanel();
-            dm = new DefaultTableModel();
 
             itemTableArea = new JTable();
             reportTableArea = new JTable();
@@ -199,7 +197,6 @@ public class View implements IView {
             reportsFrame.add("Center", reportArea);
             reportsFrame.setSize(600, 300);
             reportArea.add(reportTableArea);
-//            reportArea.add(itemTableArea);
 
             reportFormArea.setLayout(new GridLayout(3, 2));
             reportFormArea.add(date1Lbl);
