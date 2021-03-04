@@ -6,6 +6,7 @@ import il.ac.shenkar.project.costmanager.model.Currency;
 import il.ac.shenkar.project.costmanager.viewmodel.IViewModel;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -63,6 +64,7 @@ public class View implements IView {
         private JPanel addCategoryFormArea;
         private JPanel deleteFormArea;
         private JPanel feedbackArea;
+        private DefaultTableModel dm;
 
         private JLabel descriptionLbl;
         private TextField descriptionInput;
@@ -102,6 +104,7 @@ public class View implements IView {
             bottomArea = new JPanel();
             deleteFormArea = new JPanel();
             feedbackArea = new JPanel();
+            dm = new DefaultTableModel();
 
             itemTableArea = new JTable();
             reportTableArea = new JTable();
@@ -136,8 +139,8 @@ public class View implements IView {
             date2Lbl = new JLabel("To (YYYY-MM-DD)");
             date1Input = new TextField();
             date2Input = new TextField();
-            pieChartBtn = new JButton();
-            listReportBtn = new JButton();
+            pieChartBtn = new JButton("Pie Chart");
+            listReportBtn = new JButton("List Report");
         }
 
         public void setViewModel(IViewModel vm) {
@@ -149,7 +152,7 @@ public class View implements IView {
             mainFrame.add("North", addFormArea);
             mainFrame.add("Center", itemTableArea);
             mainFrame.add("South", bottomArea);
-            mainFrame.setSize(800, 500);
+            mainFrame.setSize(950, 500);
 
             bottomArea.setLayout(new BoxLayout(bottomArea, BoxLayout.Y_AXIS));
             bottomArea.add(addCategoryFormArea);
@@ -161,13 +164,16 @@ public class View implements IView {
             addFormArea.setLayout(new FlowLayout());
             addFormArea.add(descriptionLbl);
             addFormArea.add(descriptionInput);
+            descriptionInput.setColumns(10);
             addFormArea.add(sumLbl);
             addFormArea.add(sumInput);
+            sumInput.setColumns(5);
             addFormArea.add(currencyLbl);
             for (Currency currency : Currency.values()) currencyListInput.addItem(currency);
             addFormArea.add(currencyListInput);
             addFormArea.add(dateLbl);
             addFormArea.add(dateInput);
+            dateInput.setColumns(10);
             addFormArea.add(categoryLbl);
             addFormArea.add(categoryListInput);
             addFormArea.add(addCostItemBtn);
@@ -175,26 +181,33 @@ public class View implements IView {
             addCategoryFormArea.setLayout(new FlowLayout(FlowLayout.LEFT));
             addCategoryFormArea.add(addCategoryLbl);
             addCategoryFormArea.add(addCategoryInput);
+            addCategoryInput.setColumns(10);
             addCategoryFormArea.add(addCategoryBtn);
 
             deleteFormArea.setLayout(new FlowLayout(FlowLayout.LEFT));
             deleteFormArea.add(deleteLbl);
             deleteFormArea.add(itemNoInput);
+            itemNoInput.setColumns(10);
             deleteFormArea.add(deleteCostItemBtn);
 
             feedbackArea.setLayout(new FlowLayout());
             feedbackArea.add(messageField);
+            messageField.setColumns(50);
 
             reportsFrame.setLayout(new BorderLayout());
             reportsFrame.add("North", reportFormArea);
             reportsFrame.add("Center", reportArea);
-            reportsFrame.setSize(500, 300);
+            reportsFrame.setSize(600, 300);
+            reportArea.add(reportTableArea);
+//            reportArea.add(itemTableArea);
 
             reportFormArea.setLayout(new GridLayout(3, 2));
             reportFormArea.add(date1Lbl);
             reportFormArea.add(date2Lbl);
             reportFormArea.add(date1Input);
+            date1Input.setColumns(20);
             reportFormArea.add(date2Input);
+            date2Input.setColumns(20);
             reportFormArea.add(pieChartBtn);
             reportFormArea.add(listReportBtn);
 
@@ -216,18 +229,21 @@ public class View implements IView {
 
             ActionListener addAction = event -> {
                 String description = descriptionInput.getText();
+                descriptionInput.setText("");
                 double sum = Double.parseDouble(sumInput.getText());
+                sumInput.setText("");
                 Currency currency = (Currency) currencyListInput.getSelectedItem();
                 Date date = Date.valueOf(dateInput.getText());
+                dateInput.setText("");
                 Category category = new Category(categoryListInput.getSelectedItem().toString());
-                CostItem costItem = new CostItem(description, sum, currency, date, category);
-                System.out.println("AddAction");
+                CostItem costItem = new CostItem(0, description, sum, currency, date, category);
                 vm.addCostItem(costItem);
             };
             addCostItemBtn.addActionListener(addAction);
 
             ActionListener deleteAction = event -> {
                 int id = Integer.parseInt(itemNoInput.getText());
+                itemNoInput.setText("");
                 vm.deleteCostItem(id);
             };
             deleteCostItemBtn.addActionListener(deleteAction);
@@ -246,14 +262,18 @@ public class View implements IView {
 
             ActionListener listReportAction = event -> {
                 Date date1 = Date.valueOf(date1Input.getText());
+                date1Input.setText("");
                 Date date2 = Date.valueOf(date2Input.getText());
-                vm.getCostItems(date1, date2, "list");
+                date2Input.setText("");
+                vm.getCostItems(date1, date2, "report");
             };
             listReportBtn.addActionListener(listReportAction);
 
             ActionListener pieChartAction = event -> {
                 Date date1 = Date.valueOf(date1Input.getText());
+                date1Input.setText("");
                 Date date2 = Date.valueOf(date2Input.getText());
+                date2Input.setText("");
                 vm.getCostItems(date1, date2, "pie");
             };
             pieChartBtn.addActionListener(pieChartAction);
@@ -281,7 +301,7 @@ public class View implements IView {
             String[] columnNames = {"No.", "ID", "Description", "Sum", "Currency", "Category", "Date"};
             String[][] rowData = new String[items.length][7];
             for (int i = 0; i < items.length; i++) {
-                rowData[i][0] = String.valueOf(i);
+                rowData[i][0] = String.valueOf(i + 1);
                 rowData[i][1] = String.valueOf(items[i].getId());
                 rowData[i][2] = items[i].getDescription();
                 rowData[i][3] = String.valueOf(items[i].getSum());
@@ -289,23 +309,22 @@ public class View implements IView {
                 rowData[i][5] = items[i].getCategory().getName();
                 rowData[i][6] = items[i].getDate().toString();
             }
+            DefaultTableModel dm = new DefaultTableModel(rowData, columnNames);
 
             if (SwingUtilities.isEventDispatchThread()) {
-                if (type.equals("all"))
-                    itemTableArea = new JTable(rowData, columnNames);
-                else if (type.equals("report")) {
-                    reportTableArea = new JTable(rowData, columnNames);
-                    reportArea.add(reportTableArea);
+                if (type.equals("all")) {
+                    itemTableArea.setModel(dm);
+                } else if (type.equals("report")) {
+                    reportTableArea.setModel(dm);
                 }
             } else {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        if (type.equals("all"))
-                            itemTableArea = new JTable(rowData, columnNames);
-                        else if (type.equals("report")) {
-                            reportTableArea = new JTable(rowData, columnNames);
-                            reportArea.add(reportTableArea);
+                        if (type.equals("all")) {
+                            itemTableArea.setModel(dm);
+                        } else if (type.equals("report")) {
+                            reportTableArea.setModel(dm);
                         }
                     }
                 });

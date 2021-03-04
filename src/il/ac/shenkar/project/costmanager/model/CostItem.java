@@ -11,11 +11,11 @@ public class CostItem {
     private Category category;
 
 
-    public CostItem(String description, double sum, Currency currency, Date date, Category category) {
+    public CostItem(int id, String description, double sum, Currency currency, Date date, Category category) {
         setDescription(description);
         setSum(sum);
         setCurrency(currency);
-        setId();
+        setId(id);
         setDate(date);
         setCategory(category);
     }
@@ -23,7 +23,7 @@ public class CostItem {
     public void setDescription(String description) { this.description = description; }
     public void setSum(double sum) { this.sum = sum; }
     public void setCurrency(Currency currency) { this.currency = currency; }
-    public void setId() {
+    public void setId(int id) {
         this.id = id;
     }
     public void setDate(Date date) {

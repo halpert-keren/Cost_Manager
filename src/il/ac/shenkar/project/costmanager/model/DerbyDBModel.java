@@ -213,7 +213,7 @@ public class DerbyDBModel implements IModel {
             rs = statement.executeQuery("SELECT * FROM CostItem");
             int i = 0;
             while (rs.next()) {
-                costItems[i] = new CostItem(rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getDate("date_"), new Category(rs.getString("category")));
+                costItems[i] = new CostItem(rs.getInt("id") ,rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getDate("date_"), new Category(rs.getString("category")));
                 i++;
             }
             return costItems;
@@ -260,7 +260,7 @@ public class DerbyDBModel implements IModel {
             rs = statement.executeQuery("SELECT * FROM CostItem WHERE date_ BETWEEN DATE('" + dateStart + "') and DATE('" + dateEnd + "')");
             int i = 0;
             while (rs.next()) {
-                costItems[i] = new CostItem(rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getDate("date_"), new Category(rs.getString("category")));
+                costItems[i] = new CostItem(rs.getInt("id"), rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getDate("date_"), new Category(rs.getString("category")));
                 i++;
             }
             return costItems;
@@ -296,9 +296,10 @@ public class DerbyDBModel implements IModel {
 
             connection = DriverManager.getConnection(protocol);
             statement = connection.createStatement();
-            statement.executeQuery ("DELETE FROM CostItem WHERE id =" + id);
+            statement.executeUpdate("DELETE FROM CostItem WHERE id =" + id);
 
         } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
             throw new CostManagerException("problem to delete cost item", e.getCause());
 
         } finally {
