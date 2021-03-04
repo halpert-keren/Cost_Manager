@@ -40,7 +40,7 @@ public class ViewModel implements IViewModel {
                     model.addCostItem(item);
                     view.showMessage("Cost item was added successfully");
                     CostItem[] items = model.getCostItems();
-                    view.showItems(items);
+                    view.showItems(items, "all");
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -66,13 +66,13 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
-    public void getCostItems() {
+    public void getCostItems(String type) {
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     CostItem[] items = model.getCostItems();
-                    view.showItems(items);
+                    view.showItems(items, type);
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -87,9 +87,7 @@ public class ViewModel implements IViewModel {
             public void run() {
                 try {
                     CostItem[] items = model.getCostItems(date1, date2);
-                    if(type.equals("list"))
-                        view.showItems(items);
-                    else if(type.equals("pie")) {
+                    if(type.equals("pie")) {
                         Map<String, Double> map = new HashMap<>();
                         Category[] categories = model.getCategories();
 
@@ -101,9 +99,11 @@ public class ViewModel implements IViewModel {
                             double oldVal = map.get(item.getCategory().getName());
                             map.replace(item.getCategory().getName(), oldVal + item.getSum());
                         }
-
                         view.displayPieChart(map);
                     }
+                    else
+                        view.showItems(items, type);
+
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }
@@ -135,7 +135,7 @@ public class ViewModel implements IViewModel {
                     model.deleteCostItem(id);
                     view.showMessage("Cost item was deleted successfully");
                     CostItem[] items = model.getCostItems();
-                    view.showItems(items);
+                    view.showItems(items, "all");
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }

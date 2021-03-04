@@ -10,7 +10,7 @@ public interface IView {
     public void setViewModel(IViewModel vm);
     public void displayPieChart(Map map);
     public void showMessage(String text);
-    public void showItems(CostItem[] items);
+    public void showItems(CostItem[] items, String type);
     public void showCategories(Category[] categories);
 
 }

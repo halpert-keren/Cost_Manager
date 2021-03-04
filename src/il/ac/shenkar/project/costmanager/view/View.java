@@ -29,7 +29,7 @@ public class View implements IView{
 
     @Override
     public void displayPieChart(Map map) {
-
+        ui.displayPieChart(map);
     }
 
     @Override
@@ -38,8 +38,8 @@ public class View implements IView{
     }
 
     @Override
-    public void showItems(CostItem[] items) {
-        ui.showItems(items);
+    public void showItems(CostItem[] items, String type) {
+        ui.showItems(items, type);
     }
 
     @Override

@@ -12,7 +12,7 @@ public interface IViewModel {
     public void setModel(IModel model);
     public void addCostItem(CostItem item);
     public void addCategory(Category category);
-    public void getCostItems();
+    public void getCostItems(String type);
     public void getCostItems(Date date1, Date date2, String type);
     public void getCategories();
     public void deleteCostItem(int id);

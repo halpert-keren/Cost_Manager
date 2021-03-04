@@ -20,6 +20,7 @@ public class ApplicationUI extends View{
     private JPanel addFormArea;
     private JTable itemTableArea;
     private JPanel bottomArea;
+    private JPanel addCategoryFormArea;
     private JPanel deleteFormArea;
     private JPanel feedbackArea;
 
@@ -35,6 +36,9 @@ public class ApplicationUI extends View{
     private JComboBox categoryListInput;
     private JButton addCostItemBtn;
 
+    private JLabel addCategoryLbl;
+    private TextField addCategoryInput;
+    private JButton addCategoryBtn;
     private JLabel deleteLbl;
     private TextField itemNoInput;
     private JButton deleteCostItemBtn;
@@ -44,6 +48,7 @@ public class ApplicationUI extends View{
     private JFrame reportsFrame;
     private JPanel reportFormArea;
     private JPanel reportArea;
+    private JTable reportTableArea;
     private JLabel date1Lbl;
     private TextField date1Input;
     private JLabel date2Lbl;
@@ -55,7 +60,6 @@ public class ApplicationUI extends View{
     public ApplicationUI() {
         mainFrame = new JFrame("Cost Manager");
         addFormArea = new JPanel();
-        itemTableArea = new JTable();
         bottomArea = new JPanel();
         deleteFormArea = new JPanel();
         feedbackArea = new JPanel();
@@ -65,10 +69,12 @@ public class ApplicationUI extends View{
         mainFrame.add("Center", itemTableArea);
         mainFrame.add("South", bottomArea);
 
-        bottomArea.setLayout(new BorderLayout());
-        bottomArea.add("North", deleteFormArea);
-        bottomArea.add("Center", reportsBtn);
-        bottomArea.add("South", feedbackArea);
+        bottomArea.setLayout(new BoxLayout(bottomArea, BoxLayout.Y_AXIS));
+        bottomArea.add(addCategoryFormArea);
+        bottomArea.add(deleteFormArea);
+        reportsBtn = new JButton("REPORTS");
+        bottomArea.add(reportsBtn);
+        bottomArea.add(feedbackArea);
 
         addFormArea.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -139,7 +145,6 @@ public class ApplicationUI extends View{
         gbc.gridheight = 1;
         addFormArea.add(categoryLbl, gbc);
 
-        categoryListInput = new JComboBox();
         gbc.gridx = 3;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
@@ -153,8 +158,16 @@ public class ApplicationUI extends View{
         gbc.gridheight = 4;
         addFormArea.add(addCostItemBtn, gbc);
 
+        addCategoryFormArea.setLayout(new FlowLayout(FlowLayout.LEFT));
+        addCategoryLbl = new JLabel("New category name:");
+        addCategoryFormArea.add(addCategoryLbl);
+        addCategoryInput  = new TextField();
+        addCategoryFormArea.add(addCategoryInput);
+        addCategoryBtn = new JButton("ADD");
+        addCategoryFormArea.add(addCategoryBtn);
+
         deleteFormArea.setLayout(new FlowLayout(FlowLayout.LEFT));
-        deleteLbl = new JLabel("Delete cost item (No.):");
+        deleteLbl = new JLabel("Delete cost item (ID):");
         deleteFormArea.add(deleteLbl);
         itemNoInput  = new TextField();
         deleteFormArea.add(itemNoInput);
@@ -185,6 +198,10 @@ public class ApplicationUI extends View{
         reportFormArea.add(pieChartBtn);
         listReportBtn = new JButton();
         reportFormArea.add(listReportBtn);
+
+        vm.getCostItems("all");
+        vm.getCostItems("report");
+        vm.getCategories();
     }
 
     @Override
@@ -225,6 +242,13 @@ public class ApplicationUI extends View{
         };
         addCostItemBtn.addActionListener(deleteAction);
 
+        ActionListener addCategoryAction = event -> {
+            String categoryName= (String) categoryListInput.getSelectedItem();
+            Category category = new Category(categoryName);
+            vm.addCategory(category);
+        };
+        addCostItemBtn.addActionListener(addCategoryAction);
+
         ActionListener reportAction = event -> {
             reportsFrame.setVisible(true);
         };
@@ -262,7 +286,7 @@ public class ApplicationUI extends View{
     }
 
     @Override
-    public void showItems(CostItem[] items) {
+    public void showItems(CostItem[] items, String type) {
         String[] columnNames = {"No.", "ID", "Description", "Sum", "Currency", "Category", "Date"};
         String[][] rowData = new String[items.length][7];
         for (int i = 0; i < items.length; i++) {
@@ -276,7 +300,10 @@ public class ApplicationUI extends View{
         }
 
         if (SwingUtilities.isEventDispatchThread()) {
-            itemTableArea = new JTable(rowData, columnNames);
+            if(type.equals("all"))
+                itemTableArea = new JTable(rowData, columnNames);
+            else if (type.equals("report"))
+                reportTableArea = new JTable(rowData, columnNames);
         } else {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -308,5 +335,15 @@ public class ApplicationUI extends View{
     @Override
     public void displayPieChart(Map map) {
 
+        if (SwingUtilities.isEventDispatchThread()) {
+
+        } else {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            });
+        }
     }
 }
