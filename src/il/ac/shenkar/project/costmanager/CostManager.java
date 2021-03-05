@@ -1,5 +1,5 @@
 /**
- * @author Halpert, keren (313604621)
+ * @author Halpert, Keren (313604621)
  * @author Yechezkel, Danit Noa (203964036)
  */
 
@@ -31,7 +31,7 @@ public class CostManager {
             view.setViewModel(vm);
             vm.setModel(model);
             vm.setView(view);
-        } catch (CostManagerException e){
+        } catch (CostManagerException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
