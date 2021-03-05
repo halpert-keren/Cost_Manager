@@ -14,6 +14,7 @@ public class Category {
     /*
      * initialization db in method Category
      */
+
     public Category(String name) {
         setName(name);
         setId();
