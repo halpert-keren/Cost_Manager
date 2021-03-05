@@ -19,16 +19,17 @@ import java.sql.Date;
 import java.util.Map;
 
 /**
- * The View class represents the user interface of the cost manager application.
- * The setViewModel should be called before use of the class.
+ * The View class is the concrete instance of the IView interface,
+ * and represents the user interface of the application.
  */
 public class View implements IView {
     private IViewModel vm;
     private ApplicationUI ui;
 
     /**
-     * The View class represents the user interface of the cost manager application.
-     * The setViewModel should be called before use of the class.
+     * Sole constructor.
+     * Using a thread so as not to cause backup,
+     * the creation of the user interface is initiated and then run.
      */
     public View() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -41,26 +42,57 @@ public class View implements IView {
         });
     }
 
+    /**
+     * The method to set the ViewModel object so that the View has the connection needed to function.
+     *
+     * @param vm the ViewModel object that is a concrete object of the IViewModel type.
+     */
     @Override
     public void setViewModel(IViewModel vm) {
         this.vm = vm;
     }
 
+    /**
+     * The method to display the pie chart of the cost items in the user interface.
+     * Calls the user interface to execute the visualization.
+     *
+     * @param map the map representation of every category and its corresponding sum of expenses in it.
+     */
     @Override
     public void displayPieChart(Map map) {
         ui.displayPieChart(map);
     }
 
+    /**
+     * The method to display a message in the user interface.
+     * Calls the user interface to execute the visualization.
+     *
+     * @param text the string of the message to display in the user interface.
+     */
     @Override
     public void showMessage(String text) {
         ui.showMessage(text);
     }
 
+    /**
+     * The method to display a list of cost item in the user interface.
+     * Calls the user interface to execute the visualization.
+     *
+     * @param items the array of the cost items to display in the user interface.
+     * @param type  the string representing if the list of cost items is intended to be
+     *              displayed as the main table, as the table in the 'reports' frame or as a pie chart.
+     */
     @Override
     public void showItems(CostItem[] items, String type) {
         ui.showItems(items, type);
     }
 
+    /**
+     * The method to display the list of categories in the user interface.
+     * Calls the user interface to execute the visualization.
+     *
+     * @param categories the array of the categories to display in the user interface.
+     */
     @Override
     public void showCategories(Category[] categories) {
         ui.showCategories(categories);

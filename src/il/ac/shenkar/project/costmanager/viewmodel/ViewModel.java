@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 
 /**
  * The ViewModel class is the concrete instance of the IViewModel interface.
- * The class have a direct access to the methods in both the View and the Model
+ * The class has a direct access to the methods in both the View and the Model
  * portions of the MVVM architecture so that it functions as the conductor of
  * the Cost Manager application.
  */
