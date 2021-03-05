@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * The IView interface represents the view portion of the MVVM architecture structure of the Cost Manager.
- * The IModel interface needs to be implemented by a concrete class
+ * The IView interface needs to be implemented by a concrete class
  * that will be used as the direct access and connection to the user in a user interface.
  */
 public interface IView {
