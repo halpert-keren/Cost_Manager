@@ -137,23 +137,35 @@ public class ViewModel implements IViewModel {
             @Override
             public void run() {
                 try {
+                    // get the list of cost items from the DB using the Model
                     CostItem[] items = model.getCostItems();
-                    if (type.equals("pie")) {
-                        Map<String, Double> map = new HashMap<>();
-                        Category[] categories = model.getCategories();
 
+                    // if the intended use is a pie chart
+                    if (type.equals("pie")) {
+                        // create map of the categories and their sum of expenses
+                        Map<String, Double> map = new HashMap<>();
+
+                        // add categories as keys of the map
+                        Category[] categories = model.getCategories();
                         for (Category category : categories) {
                             map.put(category.getName(), 0.0);
                         }
 
+                        // add the sum of expenses as values of the map at corresponding category key
+                        // currency is converted to ILS for consistency in pie chart view
                         for (CostItem item : items) {
                             double oldVal = map.get(item.getCategory().getName());
                             map.replace(item.getCategory().getName(), oldVal + item.convertCurrencyToILS());
                         }
+
+                        // send the map and display to user interface
                         view.displayPieChart(map);
-                    } else
+                    } else {
+                        // send the list of cost items and display to user interface
                         view.showItems(items, type);
+                    }
                 } catch (CostManagerException e) {
+                    // on fail display the bad feedback to the user interface
                     view.showMessage(e.getMessage());
                 }
             }
@@ -172,28 +184,40 @@ public class ViewModel implements IViewModel {
      */
     @Override
     public void getCostItems(Date date1, Date date2, String type) {
+        // run the functionality of the action in new thread so as not to cause backup
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
+                    // get the list of cost items between the two dates from the DB using the Model
                     CostItem[] items = model.getCostItems(date1, date2);
-                    if (type.equals("pie")) {
-                        Map<String, Double> map = new HashMap<>();
-                        Category[] categories = model.getCategories();
 
+                    // if the intended use is a pie chart
+                    if (type.equals("pie")) {
+                        // create map of the categories and their sum of expenses
+                        Map<String, Double> map = new HashMap<>();
+
+                        // add categories as keys of the map
+                        Category[] categories = model.getCategories();
                         for (Category category : categories) {
                             map.put(category.getName(), 0.0);
                         }
 
+                        // add the sum of expenses as values of the map at corresponding category key
+                        // currency is converted to ILS for consistency in pie chart view
                         for (CostItem item : items) {
                             double oldVal = map.get(item.getCategory().getName());
                             map.replace(item.getCategory().getName(), oldVal + item.convertCurrencyToILS());
                         }
-                        view.displayPieChart(map);
-                    } else
-                        view.showItems(items, type);
 
+                        // send the map and display to user interface
+                        view.displayPieChart(map);
+                    } else {
+                        // send the list of cost items and display to user interface
+                        view.showItems(items, type);
+                    }
                 } catch (CostManagerException e) {
+                    // on fail display the bad feedback to the user interface
                     view.showMessage(e.getMessage());
                 }
             }
@@ -206,13 +230,18 @@ public class ViewModel implements IViewModel {
      */
     @Override
     public void getCategories() {
+        // run the functionality of the action in new thread so as not to cause backup
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
+                    // get the list of categories from the DB using the Model
                     Category[] categories = model.getCategories();
+
+                    // send the list of categories and display to user interface
                     view.showCategories(categories);
                 } catch (CostManagerException e) {
+                    // on fail display the bad feedback to the user interface
                     view.showMessage(e.getMessage());
                 }
             }
@@ -227,15 +256,22 @@ public class ViewModel implements IViewModel {
      */
     @Override
     public void deleteCostItem(int id) {
+        // run the functionality of the action in new thread so as not to cause backup
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
+                    // delete the cost item from the DB using the Model
                     model.deleteCostItem(id);
+
+                    // on success display the good feedback to the user interface
                     view.showMessage("Cost item was deleted successfully");
+
+                    // get the new list (updated) of cost items and display to user interface
                     CostItem[] items = model.getCostItems();
                     view.showItems(items, "all");
                 } catch (CostManagerException e) {
+                    // on fail display the bad feedback to the user interface
                     view.showMessage(e.getMessage());
                 }
             }
