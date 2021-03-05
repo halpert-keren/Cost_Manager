@@ -106,7 +106,6 @@ public class View implements IView {
         private JPanel addFormArea;
         private JTable itemTableArea;
         private JPanel bottomArea;
-        private JPanel addCategoryFormArea;
         private JPanel deleteFormArea;
         private JPanel feedbackArea;
 
@@ -124,6 +123,7 @@ public class View implements IView {
         private JButton addCostItemBtn;
 
         // 'add category' form components
+        private JPanel addCategoryFormArea;
         private JLabel addCategoryLbl;
         private TextField addCategoryInput;
         private JButton addCategoryBtn;
@@ -158,14 +158,12 @@ public class View implements IView {
             // main window components
             mainFrame = new JFrame("Cost Manager");
             addFormArea = new JPanel();
+            itemTableArea = new JTable();
             bottomArea = new JPanel();
             deleteFormArea = new JPanel();
             feedbackArea = new JPanel();
 
-            itemTableArea = new JTable();
-            reportTableArea = new JTable();
-            reportPieArea = new JPanel();
-            reportsBtn = new JButton("REPORTS");
+            // 'add cost item' form components
             descriptionLbl = new JLabel("Description");
             descriptionInput = new TextField();
             sumLbl = new JLabel("Sum");
@@ -178,42 +176,56 @@ public class View implements IView {
             categoryListInput = new JComboBox();
             addCostItemBtn = new JButton("ADD");
 
+            // 'add category' form components
             addCategoryFormArea = new JPanel();
             addCategoryLbl = new JLabel("New category name:");
             addCategoryInput = new TextField();
             addCategoryBtn = new JButton("ADD");
 
+            // 'delete cost item' form components
             deleteLbl = new JLabel("Delete cost item (ID):");
             itemNoInput = new TextField();
             deleteCostItemBtn = new JButton("DELETE");
 
-            messageField = new TextField();
-
+            // reports window components
+            reportsBtn = new JButton("REPORTS");
             reportsFrame = new JFrame("Cost Manager - Reports");
             reportFormArea = new JPanel();
             reportArea = new JPanel();
+            reportTableArea = new JTable();
+            reportPieArea = new JPanel();
             date1Lbl = new JLabel("From (YYYY-MM-DD)");
-            date2Lbl = new JLabel("To (YYYY-MM-DD)");
             date1Input = new TextField();
+            date2Lbl = new JLabel("To (YYYY-MM-DD)");
             date2Input = new TextField();
             pieChartBtn = new JButton("Pie Chart");
             listReportBtn = new JButton("List Report");
+
+            // user feedback message
+            messageField = new TextField();
         }
 
+        /**
+         * The method to start the application.
+         * Sets up the UI components, fills them with data, creates the action
+         * listeners and the functionality of the UI and displays the window.
+         */
         public void start() {
+            // main window settings
             mainFrame.setLayout(new BorderLayout());
             mainFrame.add("North", addFormArea);
             mainFrame.add("Center", itemTableArea);
             mainFrame.add("South", bottomArea);
             mainFrame.setSize(950, 500);
 
+            // bottom section of main window settings
             bottomArea.setLayout(new BoxLayout(bottomArea, BoxLayout.Y_AXIS));
             bottomArea.add(addCategoryFormArea);
             bottomArea.add(deleteFormArea);
-
             bottomArea.add(reportsBtn);
             bottomArea.add(feedbackArea);
 
+            // 'add cost item' form settings
             addFormArea.setLayout(new FlowLayout());
             addFormArea.add(descriptionLbl);
             addFormArea.add(descriptionInput);
@@ -231,27 +243,32 @@ public class View implements IView {
             addFormArea.add(categoryListInput);
             addFormArea.add(addCostItemBtn);
 
+            // 'add category' form settings
             addCategoryFormArea.setLayout(new FlowLayout(FlowLayout.LEFT));
             addCategoryFormArea.add(addCategoryLbl);
             addCategoryFormArea.add(addCategoryInput);
             addCategoryInput.setColumns(10);
             addCategoryFormArea.add(addCategoryBtn);
 
+            // 'delete cost item' form settings
             deleteFormArea.setLayout(new FlowLayout(FlowLayout.LEFT));
             deleteFormArea.add(deleteLbl);
             deleteFormArea.add(itemNoInput);
             itemNoInput.setColumns(10);
             deleteFormArea.add(deleteCostItemBtn);
 
+            // user feedback message settings
             feedbackArea.setLayout(new FlowLayout());
             feedbackArea.add(messageField);
             messageField.setColumns(50);
 
+            // reports window settings
             reportsFrame.setLayout(new BorderLayout());
             reportsFrame.add("North", reportFormArea);
             reportsFrame.add("Center", reportArea);
             reportsFrame.setSize(600, 600);
 
+            // reports form settings
             reportFormArea.setLayout(new GridLayout(3, 2));
             reportFormArea.add(date1Lbl);
             reportFormArea.add(date2Lbl);
@@ -262,7 +279,7 @@ public class View implements IView {
             reportFormArea.add(pieChartBtn);
             reportFormArea.add(listReportBtn);
 
-
+            // add window closing listeners
             mainFrame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent event) {
                     mainFrame.setVisible(false);
@@ -270,7 +287,6 @@ public class View implements IView {
                     System.exit(0);
                 }
             });
-
             reportsFrame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent event) {
                     reportsFrame.setVisible(false);
@@ -279,44 +295,70 @@ public class View implements IView {
                 }
             });
 
+            // declare action listeners and add to buttons
+
             ActionListener addAction = event -> {
+                // get the user input from the form
                 String description = descriptionInput.getText();
-                descriptionInput.setText("");
                 double sum = Double.parseDouble(sumInput.getText());
-                sumInput.setText("");
                 Currency currency = (Currency) currencyListInput.getSelectedItem();
                 String date = dateInput.getText();
-                dateInput.setText("");
                 String category = categoryListInput.getSelectedItem().toString();
+
+                // clear the form
+                descriptionInput.setText("");
+                sumInput.setText("");
+                dateInput.setText("");
+
+                // send the action request to the ViewModel
                 vm.addCostItem(description, sum, currency, date, category);
             };
+            // add the 'add cost item' action listener
             addCostItemBtn.addActionListener(addAction);
 
             ActionListener deleteAction = event -> {
+                // get the user input from the form
                 int id = Integer.parseInt(itemNoInput.getText());
+
+                // clear the form
                 itemNoInput.setText("");
+
+                // send the action request to the ViewModel
                 vm.deleteCostItem(id);
             };
+            // add the 'delete cost item' action listener
             deleteCostItemBtn.addActionListener(deleteAction);
 
             ActionListener addCategoryAction = event -> {
+                // get the user input from the form
                 String category = addCategoryInput.getText();
+
+                // clear the form
                 addCategoryInput.setText("");
+
+                // send the action request to the ViewModel
                 vm.addCategory(category);
             };
+            // add the 'add category' action listener
             addCategoryBtn.addActionListener(addCategoryAction);
 
-            ActionListener reportAction = event -> {
-                reportsFrame.setVisible(true);
-            };
+            // open the 'reports' window
+            ActionListener reportAction = event -> reportsFrame.setVisible(true);
+            // add the 'open reports window' action listener
             reportsBtn.addActionListener(reportAction);
 
             ActionListener listReportAction = event -> {
+                // get the user input from the form
                 String date1 = date1Input.getText();
                 String date2 = date2Input.getText();
+
+                // clear the form
                 date1Input.setText("");
                 date2Input.setText("");
 
+                // send the action request to the ViewModel:
+                // if entered dates, get between them,
+                // if no date entered, get all cost items
                 if (!date1.equals("") && !date2.equals("")) {
                     Date date1Converted = Date.valueOf(date1);
                     Date date2Converted = Date.valueOf(date2);
@@ -325,14 +367,21 @@ public class View implements IView {
                     vm.getCostItems("report");
                 }
             };
+            // add the 'get list report' action listener
             listReportBtn.addActionListener(listReportAction);
 
             ActionListener pieChartAction = event -> {
+                // get the user input from the form
                 String date1 = date1Input.getText();
                 String date2 = date2Input.getText();
+
+                // clear the form
                 date1Input.setText("");
                 date2Input.setText("");
 
+                // send the action request to the ViewModel:
+                // if entered dates, get between them,
+                // if no date entered, get all cost items
                 if (!date1.equals("") && !date2.equals("")) {
                     Date date1Converted = Date.valueOf(date1);
                     Date date2Converted = Date.valueOf(date2);
@@ -341,29 +390,51 @@ public class View implements IView {
                     vm.getCostItems("pie");
                 }
             };
+            // add the 'get pie chart' action listener
             pieChartBtn.addActionListener(pieChartAction);
 
+            // fill the tables and select category field with the DB data
             vm.getCostItems("all");
             vm.getCostItems("report");
             vm.getCategories();
             mainFrame.setVisible(true);
         }
 
+        /**
+         * The method to display a message in the user feedback component.
+         * Uses EDT thread so as not to cause a backup and delay in the UI.
+         *
+         * @param text the string of the message to display in the user interface.
+         */
         public void showMessage(String text) {
+            // run the functionality of the action in an EDT thread so as not to cause backup
             if (SwingUtilities.isEventDispatchThread()) {
+                // display the message in the feedback text field
                 messageField.setText(text);
             } else {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        // display the message in the feedback text field
                         messageField.setText(text);
                     }
                 });
             }
         }
 
+        /**
+         * The method to display a list of cost item in the table section (either in the main window
+         * or int he reports window).
+         * Uses EDT thread so as not to cause a backup and delay in the UI.
+         *
+         * @param items the array of the cost items to display in the user interface.
+         * @param type  the string representing if the list of cost items is intended to be
+         *              displayed as the main table, as the table in the 'reports' frame or as a pie chart.
+         */
         public void showItems(CostItem[] items, String type) {
+            // run the functionality of the action in an EDT thread so as not to cause backup
             if (SwingUtilities.isEventDispatchThread()) {
+                // create the table to display the cost items
                 String[] columnNames = {"No.", "ID", "Description", "Sum", "Currency", "Category", "Date"};
                 String[][] rowData = new String[items.length][7];
                 rowData[0][0] = "No.";
@@ -384,6 +455,7 @@ public class View implements IView {
                 }
                 DefaultTableModel dm = new DefaultTableModel(rowData, columnNames);
 
+                // display the table in the main window or the reports window
                 if (type.equals("all")) {
                     itemTableArea.setModel(dm);
                 } else if (type.equals("report")) {
@@ -397,6 +469,7 @@ public class View implements IView {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        // create the table to display the cost items
                         String[] columnNames = {"No.", "ID", "Description", "Sum", "Currency", "Category", "Date"};
                         String[][] rowData = new String[items.length][7];
                         rowData[0][0] = "No.";
@@ -417,6 +490,7 @@ public class View implements IView {
                         }
                         DefaultTableModel dm = new DefaultTableModel(rowData, columnNames);
 
+                        // display the table in the main window or the reports window
                         if (type.equals("all")) {
                             itemTableArea.setModel(dm);
                         } else if (type.equals("report")) {
@@ -431,8 +505,16 @@ public class View implements IView {
             }
         }
 
+        /**
+         * The method to display the list of categories in the select box in the 'add cost item' form.
+         * Uses EDT thread so as not to cause a backup and delay in the UI.
+         *
+         * @param categories the array of the categories to display in the user interface.
+         */
         public void showCategories(Category[] categories) {
+            // run the functionality of the action in an EDT thread so as not to cause backup
             if (SwingUtilities.isEventDispatchThread()) {
+                // remove current dropdown list and repopulate with new list
                 categoryListInput.removeAllItems();
                 for (Category category : categories) {
                     categoryListInput.addItem(category.getName());
@@ -441,6 +523,7 @@ public class View implements IView {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        // remove current dropdown list and repopulate with new list
                         categoryListInput.removeAllItems();
                         for (Category category : categories) {
                             categoryListInput.addItem(category.getName());
@@ -450,14 +533,23 @@ public class View implements IView {
             }
         }
 
+        /**
+         * The method to display the pie chart of the cost items in the reports window.
+         * Uses EDT thread so as not to cause a backup and delay in the UI.
+         *
+         * @param map the map representation of every category and its corresponding sum of expenses in it.
+         */
         public void displayPieChart(Map map) {
+            // run the functionality of the action in an EDT thread so as not to cause backup
             if (SwingUtilities.isEventDispatchThread()) {
+                // create pie chart from map
                 DefaultPieDataset dataset = new DefaultPieDataset();
                 map.forEach((key, value) -> dataset.setValue(key.toString(), (Double) value));
                 JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)", dataset, true, false, false);
                 pieChart.setBorderVisible(false);
                 ChartPanel pie = new ChartPanel(pieChart);
 
+                // clear existing chart or table and display the new one
                 reportPieArea.removeAll();
                 reportPieArea.add(pie);
                 reportArea.setVisible(false);
@@ -469,12 +561,14 @@ public class View implements IView {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        // create pie chart from map
                         DefaultPieDataset dataset = new DefaultPieDataset();
                         map.forEach((key, value) -> dataset.setValue(key.toString(), (Double) value));
                         JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)", dataset, true, false, false);
                         pieChart.setBorderVisible(false);
                         ChartPanel pie = new ChartPanel(pieChart);
 
+                        // clear existing chart or table and display the new one
                         reportPieArea.removeAll();
                         reportPieArea.add(pie);
                         reportArea.setVisible(false);
