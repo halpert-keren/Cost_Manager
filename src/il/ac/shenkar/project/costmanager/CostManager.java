@@ -1,3 +1,8 @@
+/**
+ * @author Halpert, keren (313604621)
+ * @author Yechezkel, Danit Noa (203964036)
+ */
+
 package il.ac.shenkar.project.costmanager;
 
 import il.ac.shenkar.project.costmanager.model.CostManagerException;
