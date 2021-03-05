@@ -14,6 +14,12 @@ import java.awt.event.WindowEvent;
 import java.sql.Date;
 import java.util.Map;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+
+
 public class View implements IView {
     private IViewModel vm;
     private ApplicationUI ui;
@@ -90,6 +96,7 @@ public class View implements IView {
         private JPanel reportFormArea;
         private JPanel reportArea;
         private JTable reportTableArea;
+        private JPanel reportPieArea;
         private JLabel date1Lbl;
         private TextField date1Input;
         private JLabel date2Lbl;
@@ -106,6 +113,7 @@ public class View implements IView {
 
             itemTableArea = new JTable();
             reportTableArea = new JTable();
+            reportPieArea = new JPanel();
             reportsBtn = new JButton("REPORTS");
             descriptionLbl = new JLabel("Description");
             descriptionInput = new TextField();
@@ -196,7 +204,7 @@ public class View implements IView {
             reportsFrame.add("North", reportFormArea);
             reportsFrame.add("Center", reportArea);
             reportsFrame.setSize(600, 300);
-            reportArea.add(reportTableArea);
+//            reportArea.add(reportTableArea);
 
             reportFormArea.setLayout(new GridLayout(3, 2));
             reportFormArea.add(date1Lbl);
@@ -312,6 +320,7 @@ public class View implements IView {
                 if (type.equals("all")) {
                     itemTableArea.setModel(dm);
                 } else if (type.equals("report")) {
+                    reportArea.add(reportTableArea);
                     reportTableArea.setModel(dm);
                 }
             } else {
@@ -321,6 +330,7 @@ public class View implements IView {
                         if (type.equals("all")) {
                             itemTableArea.setModel(dm);
                         } else if (type.equals("report")) {
+                            reportArea.add(reportTableArea);
                             reportTableArea.setModel(dm);
                         }
                     }
@@ -347,6 +357,18 @@ public class View implements IView {
         }
 
         public void displayPieChart(Map map) {
+            DefaultPieDataset dataset = new DefaultPieDataset();
+            map.forEach((key,value) -> dataset.setValue(key.toString(), (Double) value));
+            JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions", dataset, true, false, false);
+            pieChart.setBorderVisible(false);
+            ChartPanel pie = new ChartPanel( pieChart );
+
+            reportPieArea.add(pie);
+            reportArea.setVisible(false);
+            reportArea.remove(reportTableArea);
+            reportArea.setVisible(true);
+            reportsFrame.setSize(600, 600);
+            reportArea.add(reportPieArea);
 
             if (SwingUtilities.isEventDispatchThread()) {
 
