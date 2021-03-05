@@ -200,8 +200,7 @@ public class View implements IView {
             reportsFrame.setLayout(new BorderLayout());
             reportsFrame.add("North", reportFormArea);
             reportsFrame.add("Center", reportArea);
-            reportsFrame.setSize(600, 300);
-//            reportArea.add(reportTableArea);
+            reportsFrame.setSize(600, 600);
 
             reportFormArea.setLayout(new GridLayout(3, 2));
             reportFormArea.add(date1Lbl);
@@ -314,31 +313,33 @@ public class View implements IView {
         }
 
         public void showItems(CostItem[] items, String type) {
-            String[] columnNames = {"No.", "ID", "Description", "Sum", "Currency", "Category", "Date"};
-            String[][] rowData = new String[items.length][7];
-            rowData[0][0] = "No.";
-            rowData[0][1] = "ID";
-            rowData[0][2] = "Description";
-            rowData[0][3] = "Sum";
-            rowData[0][4] = "Currency";
-            rowData[0][5] = "Category";
-            rowData[0][6] = "Date";
-            for (int i = 1; i < items.length; i++) {
-                rowData[i][0] = String.valueOf(i);
-                rowData[i][1] = String.valueOf(items[i].getId());
-                rowData[i][2] = items[i].getDescription();
-                rowData[i][3] = String.valueOf(items[i].getSum());
-                rowData[i][4] = items[i].getCurrency().toString();
-                rowData[i][5] = items[i].getCategory().getName();
-                rowData[i][6] = items[i].getDate().toString();
-            }
-            DefaultTableModel dm = new DefaultTableModel(rowData, columnNames);
-
             if (SwingUtilities.isEventDispatchThread()) {
+                String[] columnNames = {"No.", "ID", "Description", "Sum", "Currency", "Category", "Date"};
+                String[][] rowData = new String[items.length][7];
+                rowData[0][0] = "No.";
+                rowData[0][1] = "ID";
+                rowData[0][2] = "Description";
+                rowData[0][3] = "Sum";
+                rowData[0][4] = "Currency";
+                rowData[0][5] = "Category";
+                rowData[0][6] = "Date";
+                for (int i = 1; i < items.length; i++) {
+                    rowData[i][0] = String.valueOf(i);
+                    rowData[i][1] = String.valueOf(items[i].getId());
+                    rowData[i][2] = items[i].getDescription();
+                    rowData[i][3] = String.valueOf(items[i].getSum());
+                    rowData[i][4] = items[i].getCurrency().toString();
+                    rowData[i][5] = items[i].getCategory().getName();
+                    rowData[i][6] = items[i].getDate().toString();
+                }
+                DefaultTableModel dm = new DefaultTableModel(rowData, columnNames);
+
                 if (type.equals("all")) {
                     itemTableArea.setModel(dm);
                 } else if (type.equals("report")) {
+                    reportArea.setVisible(false);
                     reportArea.remove(reportPieArea);
+                    reportArea.setVisible(true);
                     reportArea.add(reportTableArea);
                     reportTableArea.setModel(dm);
                 }
@@ -346,10 +347,32 @@ public class View implements IView {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        String[] columnNames = {"No.", "ID", "Description", "Sum", "Currency", "Category", "Date"};
+                        String[][] rowData = new String[items.length][7];
+                        rowData[0][0] = "No.";
+                        rowData[0][1] = "ID";
+                        rowData[0][2] = "Description";
+                        rowData[0][3] = "Sum";
+                        rowData[0][4] = "Currency";
+                        rowData[0][5] = "Category";
+                        rowData[0][6] = "Date";
+                        for (int i = 1; i < items.length; i++) {
+                            rowData[i][0] = String.valueOf(i);
+                            rowData[i][1] = String.valueOf(items[i].getId());
+                            rowData[i][2] = items[i].getDescription();
+                            rowData[i][3] = String.valueOf(items[i].getSum());
+                            rowData[i][4] = items[i].getCurrency().toString();
+                            rowData[i][5] = items[i].getCategory().getName();
+                            rowData[i][6] = items[i].getDate().toString();
+                        }
+                        DefaultTableModel dm = new DefaultTableModel(rowData, columnNames);
+
                         if (type.equals("all")) {
                             itemTableArea.setModel(dm);
                         } else if (type.equals("report")) {
+                            reportArea.setVisible(false);
                             reportArea.remove(reportPieArea);
+                            reportArea.setVisible(true);
                             reportArea.add(reportTableArea);
                             reportTableArea.setModel(dm);
                         }
@@ -359,8 +382,8 @@ public class View implements IView {
         }
 
         public void showCategories(Category[] categories) {
-            categoryListInput.removeAllItems();
             if (SwingUtilities.isEventDispatchThread()) {
+                categoryListInput.removeAllItems();
                 for (Category category : categories) {
                     categoryListInput.addItem(category.getName());
                 }
@@ -368,6 +391,7 @@ public class View implements IView {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        categoryListInput.removeAllItems();
                         for (Category category : categories) {
                             categoryListInput.addItem(category.getName());
                         }
@@ -377,26 +401,36 @@ public class View implements IView {
         }
 
         public void displayPieChart(Map map) {
-            DefaultPieDataset dataset = new DefaultPieDataset();
-            map.forEach((key,value) -> dataset.setValue(key.toString(), (Double) value));
-            JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions", dataset, true, false, false);
-            pieChart.setBorderVisible(false);
-            ChartPanel pie = new ChartPanel( pieChart );
-
-            reportPieArea.add(pie);
-            reportArea.setVisible(false);
-            reportArea.remove(reportPieArea);
-            reportArea.remove(reportTableArea);
-            reportArea.setVisible(true);
-            reportsFrame.setSize(600, 600);
-            reportArea.add(reportPieArea);
-
             if (SwingUtilities.isEventDispatchThread()) {
+                DefaultPieDataset dataset = new DefaultPieDataset();
+                map.forEach((key,value) -> dataset.setValue(key.toString(), (Double) value));
+                JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions", dataset, true, false, false);
+                pieChart.setBorderVisible(false);
+                ChartPanel pie = new ChartPanel( pieChart );
+
+                reportPieArea.removeAll();
+                reportPieArea.add(pie);
+                reportArea.setVisible(false);
+                reportArea.remove(reportTableArea);
+                reportArea.setVisible(true);
+                reportArea.add(reportPieArea);
 
             } else {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        DefaultPieDataset dataset = new DefaultPieDataset();
+                        map.forEach((key,value) -> dataset.setValue(key.toString(), (Double) value));
+                        JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions", dataset, true, false, false);
+                        pieChart.setBorderVisible(false);
+                        ChartPanel pie = new ChartPanel( pieChart );
+
+                        reportPieArea.removeAll();
+                        reportPieArea.add(pie);
+                        reportArea.setVisible(false);
+                        reportArea.remove(reportTableArea);
+                        reportArea.setVisible(true);
+                        reportArea.add(reportPieArea);
 
                     }
                 });
