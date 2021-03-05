@@ -1,32 +1,32 @@
-/**
- * Class Category contains in Model.
- * Class Category contains 5 methods.
- * The goal of this class do gets and sets on Category of database
- *
- * @param name is an object of type category
- * @param id is an object of type unique category
- */
-
 package il.ac.shenkar.project.costmanager.model;
 
+/**
+ * The Category class represents a category in the Cost Manager application.
+ */
 public class Category {
     private String name;
-    private int id;
 
-    /*
-     * initialization db in method Category
+    /**
+     * Sole constructor.
+     * Creates an instance of a category object.
+     *
+     * @param name the name of the new category.
+     * @throws CostManagerException if could not set the category name.
      */
     public Category(String name) throws CostManagerException {
         try {
             setName(name);
-            setId();
         } catch (CostManagerException e) {
             throw new CostManagerException(e.getMessage());
         }
     }
 
-    /*
-     * function setName doing updates to name category
+    /**
+     * The method to set the name of the category.
+     * Validate that the name is not an empty string.
+     *
+     * @param name the name of the new category.
+     * @throws CostManagerException if the name is an empty string.
      */
     public void setName(String name) throws CostManagerException {
         if (!name.equals(""))
@@ -35,24 +35,12 @@ public class Category {
             throw new CostManagerException("Can't create a cost item without a description.");
     }
 
-    /*
-     * function setId doing updates id specific
-     */
-    public void setId() {
-        this.id = id;
-    }
-
-    /*
-     * function getName get data from table Category by name
+    /**
+     * The method to get the name of the category.
+     *
+     * @return a string of the name of the category.
      */
     public String getName() {
         return name;
-    }
-
-    /*
-     * function getId get data from table Category by id specific
-     */
-    public int getId() {
-        return id;
     }
 }
