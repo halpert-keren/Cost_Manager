@@ -72,7 +72,21 @@ public class ViewModel implements IViewModel {
             public void run() {
                 try {
                     CostItem[] items = model.getCostItems();
-                    view.showItems(items, type);
+                    if(type.equals("pie")) {
+                        Map<String, Double> map = new HashMap<>();
+                        Category[] categories = model.getCategories();
+
+                        for (Category category: categories){
+                            map.put(category.getName(), 0.0);
+                        }
+
+                        for (CostItem item: items){
+                            double oldVal = map.get(item.getCategory().getName());
+                            map.replace(item.getCategory().getName(), oldVal + item.getSum());
+                        }
+                        view.displayPieChart(map);
+                    }else
+                        view.showItems(items, type);
                 } catch (CostManagerException e) {
                     view.showMessage(e.getMessage());
                 }

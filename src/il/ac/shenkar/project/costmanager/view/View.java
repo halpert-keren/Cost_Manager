@@ -4,7 +4,10 @@ import il.ac.shenkar.project.costmanager.model.Category;
 import il.ac.shenkar.project.costmanager.model.CostItem;
 import il.ac.shenkar.project.costmanager.model.Currency;
 import il.ac.shenkar.project.costmanager.viewmodel.IViewModel;
-
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -13,12 +16,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Date;
 import java.util.Map;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.general.DefaultPieDataset;
-
 
 public class View implements IView {
     private IViewModel vm;
@@ -266,20 +263,34 @@ public class View implements IView {
             reportsBtn.addActionListener(reportAction);
 
             ActionListener listReportAction = event -> {
-                Date date1 = Date.valueOf(date1Input.getText());
+                String date1 = date1Input.getText();
+                String date2 = date2Input.getText();
                 date1Input.setText("");
-                Date date2 = Date.valueOf(date2Input.getText());
                 date2Input.setText("");
-                vm.getCostItems(date1, date2, "report");
+
+                if(!date1.equals("") && !date2.equals("")) {
+                    Date date1Converted = Date.valueOf(date1);
+                    Date date2Converted = Date.valueOf(date2);
+                    vm.getCostItems(date1Converted, date2Converted, "report");
+                } else {
+                    vm.getCostItems("report");
+                }
             };
             listReportBtn.addActionListener(listReportAction);
 
             ActionListener pieChartAction = event -> {
-                Date date1 = Date.valueOf(date1Input.getText());
+                String date1 = date1Input.getText();
+                String date2 = date2Input.getText();
                 date1Input.setText("");
-                Date date2 = Date.valueOf(date2Input.getText());
                 date2Input.setText("");
-                vm.getCostItems(date1, date2, "pie");
+
+                if(!date1.equals("") && !date2.equals("")) {
+                    Date date1Converted = Date.valueOf(date1);
+                    Date date2Converted = Date.valueOf(date2);
+                    vm.getCostItems(date1Converted, date2Converted, "pie");
+                } else {
+                    vm.getCostItems("pie");
+                }
             };
             pieChartBtn.addActionListener(pieChartAction);
 
@@ -305,8 +316,15 @@ public class View implements IView {
         public void showItems(CostItem[] items, String type) {
             String[] columnNames = {"No.", "ID", "Description", "Sum", "Currency", "Category", "Date"};
             String[][] rowData = new String[items.length][7];
-            for (int i = 0; i < items.length; i++) {
-                rowData[i][0] = String.valueOf(i + 1);
+            rowData[0][0] = "No.";
+            rowData[0][1] = "ID";
+            rowData[0][2] = "Description";
+            rowData[0][3] = "Sum";
+            rowData[0][4] = "Currency";
+            rowData[0][5] = "Category";
+            rowData[0][6] = "Date";
+            for (int i = 1; i < items.length; i++) {
+                rowData[i][0] = String.valueOf(i);
                 rowData[i][1] = String.valueOf(items[i].getId());
                 rowData[i][2] = items[i].getDescription();
                 rowData[i][3] = String.valueOf(items[i].getSum());
@@ -320,6 +338,7 @@ public class View implements IView {
                 if (type.equals("all")) {
                     itemTableArea.setModel(dm);
                 } else if (type.equals("report")) {
+                    reportArea.remove(reportPieArea);
                     reportArea.add(reportTableArea);
                     reportTableArea.setModel(dm);
                 }
@@ -330,6 +349,7 @@ public class View implements IView {
                         if (type.equals("all")) {
                             itemTableArea.setModel(dm);
                         } else if (type.equals("report")) {
+                            reportArea.remove(reportPieArea);
                             reportArea.add(reportTableArea);
                             reportTableArea.setModel(dm);
                         }
@@ -365,6 +385,7 @@ public class View implements IView {
 
             reportPieArea.add(pie);
             reportArea.setVisible(false);
+            reportArea.remove(reportPieArea);
             reportArea.remove(reportTableArea);
             reportArea.setVisible(true);
             reportsFrame.setSize(600, 600);
