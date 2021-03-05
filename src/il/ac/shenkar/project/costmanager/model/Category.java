@@ -1,7 +1,7 @@
 /**
  * Class Category contains in Model.
- * Class Category inheritor 5 methods of CRUD
- * The goal of this class do CRUD on Category of database
+ * Class Category contains 5 methods.
+ * The goal of this class do gets and sets on Category of database
  * @param name is an object of type category
  * @param id is an object of type unique category
  */
@@ -14,19 +14,18 @@ public class Category {
     /*
      * initialization db in method Category
      */
-
     public Category(String name) {
         setName(name);
         setId();
     }
     /*
-     * function setName
+     * function setName doing updates to name category
      */
     public void setName(String name) {
         this.name = name;
     }
     /*
-     * function setId function update, doing updates on data from table Category with id specific
+     * function setId doing updates id specific
      */
     public void setId() {
         this.id = id;
