@@ -31,13 +31,13 @@ public interface IViewModel {
      * The method to create a new cost item, the method is called upon by the user
      * and the ViewModel passes the request on to the Model to be executed and added to the DB.
      *
-     * @param description indicates the description of the cost item.
-     * @param sum         indicates the expense/price of the cost item.
-     * @param currency    indicates the currency of the cost item.
-     * @param date        indicates the date in which the expense was made.
-     * @param category    indicates category that the cost item belongs to.
+     * @param description  indicates the description of the cost item.
+     * @param sum          indicates the expense/price of the cost item.
+     * @param currency     indicates the currency of the cost item.
+     * @param date         indicates the date in which the expense was made.
+     * @param categoryName indicates category that the cost item belongs to.
      */
-    void addCostItem(String description, double sum, Currency currency, String date, String category);
+    void addCostItem(String description, double sum, Currency currency, String date, String categoryName);
 
     /**
      * The method to create a new category, the method is called upon by the user
