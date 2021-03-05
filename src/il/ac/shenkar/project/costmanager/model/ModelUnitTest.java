@@ -13,7 +13,7 @@ public class ModelUnitTest {
 
 //            Category[] categories = model.getCategories();
 //            System.out.println(categories[1].getName());
-            CostItem costItem = new CostItem(2, "bb", 3.2, Currency.EURO, Date.valueOf("2021-03-03"), category);
+            CostItem costItem = new CostItem(2, "bb", 3.2, Currency.EURO, "2021-03-03", category);
             model.addCostItem(costItem);
 
             CostItem[] costItems = model.getCostItems();

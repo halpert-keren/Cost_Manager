@@ -43,7 +43,6 @@ public class DerbyDBModel implements IModel {
 
         } catch (SQLException e) {
             if ("X0Y32".equals(e.getSQLState())) {
-                System.out.println("Table already exists");
             } else
                 throw new CostManagerException(e.getMessage(), e.getCause());
         } finally {
@@ -52,14 +51,12 @@ public class DerbyDBModel implements IModel {
                     statement.close();
                 } catch (Exception e) {
                     throw new CostManagerException(e.getMessage(), e.getCause());
-
                 }
             if (connection != null)
                 try {
                     connection.close();
                 } catch (Exception e) {
                     throw new CostManagerException(e.getMessage(), e.getCause());
-
                 }
         }
     }
@@ -78,21 +75,18 @@ public class DerbyDBModel implements IModel {
             statement.executeUpdate("INSERT INTO CostItem (description, price, currency, date_, category) VALUES('" + item.getDescription() + "'," + item.getSum() + ",'" + item.getCurrency().toString() + "','" + item.getDate() + "','" + item.getCategory().getName() + "')");
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException(e.getMessage(), e.getCause());
-
         } finally {
             if (statement != null)
                 try {
                     statement.close();
                 } catch (Exception e) {
                     throw new CostManagerException(e.getMessage(), e.getCause());
-
                 }
             if (connection != null)
                 try {
                     connection.close();
                 } catch (Exception e) {
                     throw new CostManagerException(e.getMessage(), e.getCause());
-
                 }
         }
     }
@@ -137,7 +131,6 @@ public class DerbyDBModel implements IModel {
                 } catch (Exception e) {
                 }
         }
-
     }
 
     /**
@@ -171,21 +164,18 @@ public class DerbyDBModel implements IModel {
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException(e.getMessage(), e.getCause());
-
         } finally {
             if (statement != null)
                 try {
                     statement.close();
                 } catch (Exception e) {
                     throw new CostManagerException(e.getMessage(), e.getCause());
-
                 }
             if (connection != null)
                 try {
                     connection.close();
                 } catch (Exception e) {
                     throw new CostManagerException(e.getMessage(), e.getCause());
-
                 }
         }
     }
@@ -213,7 +203,7 @@ public class DerbyDBModel implements IModel {
             rs = statement.executeQuery("SELECT * FROM CostItem");
             int i = 0;
             while (rs.next()) {
-                costItems[i] = new CostItem(rs.getInt("id") ,rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getDate("date_"), new Category(rs.getString("category")));
+                costItems[i] = new CostItem(rs.getInt("id") ,rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getString("date_"), new Category(rs.getString("category")));
                 i++;
             }
             return costItems;
@@ -225,14 +215,12 @@ public class DerbyDBModel implements IModel {
                     statement.close();
                 } catch (Exception e) {
                     throw new CostManagerException(e.getMessage(), e.getCause());
-
                 }
             if (connection != null)
                 try {
                     connection.close();
                 } catch (Exception e) {
                     throw new CostManagerException(e.getMessage(), e.getCause());
-
                 }
         }
     }
@@ -260,14 +248,13 @@ public class DerbyDBModel implements IModel {
             rs = statement.executeQuery("SELECT * FROM CostItem WHERE date_ BETWEEN DATE('" + dateStart + "') and DATE('" + dateEnd + "')");
             int i = 0;
             while (rs.next()) {
-                costItems[i] = new CostItem(rs.getInt("id"), rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getDate("date_"), new Category(rs.getString("category")));
+                costItems[i] = new CostItem(rs.getInt("id"), rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getString("date_"), new Category(rs.getString("category")));
                 i++;
             }
             return costItems;
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException(e.getMessage(), e.getCause());
-
         } finally {
             if (statement != null)
                 try {
@@ -280,7 +267,6 @@ public class DerbyDBModel implements IModel {
                 } catch (Exception e) {
                 }
         }
-
     }
 
     /**

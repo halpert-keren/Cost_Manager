@@ -8,6 +8,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -17,10 +18,18 @@ import java.awt.event.WindowEvent;
 import java.sql.Date;
 import java.util.Map;
 
+/**
+ * The View class represents the user interface of the cost manager application.
+ * The setViewModel should be called before use of the class.
+ */
 public class View implements IView {
     private IViewModel vm;
     private ApplicationUI ui;
 
+    /**
+     * The View class represents the user interface of the cost manager application.
+     * The setViewModel should be called before use of the class.
+     */
     public View() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -217,7 +226,6 @@ public class View implements IView {
                 public void windowClosing(WindowEvent event) {
                     mainFrame.setVisible(false);
                     mainFrame.dispose();
-                    reportsFrame.dispose();
                     System.exit(0);
                 }
             });
@@ -225,6 +233,8 @@ public class View implements IView {
             reportsFrame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent event) {
                     reportsFrame.setVisible(false);
+                    reportPieArea.removeAll();
+                    reportsFrame.dispose();
                 }
             });
 
@@ -234,11 +244,10 @@ public class View implements IView {
                 double sum = Double.parseDouble(sumInput.getText());
                 sumInput.setText("");
                 Currency currency = (Currency) currencyListInput.getSelectedItem();
-                Date date = Date.valueOf(dateInput.getText());
+                String date = dateInput.getText();
                 dateInput.setText("");
-                Category category = new Category(categoryListInput.getSelectedItem().toString());
-                CostItem costItem = new CostItem(0, description, sum, currency, date, category);
-                vm.addCostItem(costItem);
+                String category = categoryListInput.getSelectedItem().toString();
+                vm.addCostItem(description, sum, currency, date, category);
             };
             addCostItemBtn.addActionListener(addAction);
 
@@ -250,7 +259,7 @@ public class View implements IView {
             deleteCostItemBtn.addActionListener(deleteAction);
 
             ActionListener addCategoryAction = event -> {
-                Category category = new Category(addCategoryInput.getText());
+                String category = addCategoryInput.getText();
                 addCategoryInput.setText("");
                 vm.addCategory(category);
             };
@@ -267,7 +276,7 @@ public class View implements IView {
                 date1Input.setText("");
                 date2Input.setText("");
 
-                if(!date1.equals("") && !date2.equals("")) {
+                if (!date1.equals("") && !date2.equals("")) {
                     Date date1Converted = Date.valueOf(date1);
                     Date date2Converted = Date.valueOf(date2);
                     vm.getCostItems(date1Converted, date2Converted, "report");
@@ -283,7 +292,7 @@ public class View implements IView {
                 date1Input.setText("");
                 date2Input.setText("");
 
-                if(!date1.equals("") && !date2.equals("")) {
+                if (!date1.equals("") && !date2.equals("")) {
                     Date date1Converted = Date.valueOf(date1);
                     Date date2Converted = Date.valueOf(date2);
                     vm.getCostItems(date1Converted, date2Converted, "pie");
@@ -403,10 +412,10 @@ public class View implements IView {
         public void displayPieChart(Map map) {
             if (SwingUtilities.isEventDispatchThread()) {
                 DefaultPieDataset dataset = new DefaultPieDataset();
-                map.forEach((key,value) -> dataset.setValue(key.toString(), (Double) value));
-                JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions", dataset, true, false, false);
+                map.forEach((key, value) -> dataset.setValue(key.toString(), (Double) value));
+                JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)", dataset, true, false, false);
                 pieChart.setBorderVisible(false);
-                ChartPanel pie = new ChartPanel( pieChart );
+                ChartPanel pie = new ChartPanel(pieChart);
 
                 reportPieArea.removeAll();
                 reportPieArea.add(pie);
@@ -420,10 +429,10 @@ public class View implements IView {
                     @Override
                     public void run() {
                         DefaultPieDataset dataset = new DefaultPieDataset();
-                        map.forEach((key,value) -> dataset.setValue(key.toString(), (Double) value));
-                        JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions", dataset, true, false, false);
+                        map.forEach((key, value) -> dataset.setValue(key.toString(), (Double) value));
+                        JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)", dataset, true, false, false);
                         pieChart.setBorderVisible(false);
-                        ChartPanel pie = new ChartPanel( pieChart );
+                        ChartPanel pie = new ChartPanel(pieChart);
 
                         reportPieArea.removeAll();
                         reportPieArea.add(pie);

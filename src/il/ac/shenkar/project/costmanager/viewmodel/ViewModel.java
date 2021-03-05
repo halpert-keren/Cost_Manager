@@ -1,9 +1,6 @@
 package il.ac.shenkar.project.costmanager.viewmodel;
 
-import il.ac.shenkar.project.costmanager.model.Category;
-import il.ac.shenkar.project.costmanager.model.CostItem;
-import il.ac.shenkar.project.costmanager.model.CostManagerException;
-import il.ac.shenkar.project.costmanager.model.IModel;
+import il.ac.shenkar.project.costmanager.model.*;
 import il.ac.shenkar.project.costmanager.view.IView;
 
 import java.sql.Date;
@@ -32,11 +29,13 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
-    public void addCostItem(CostItem item) {
+    public void addCostItem(String description, double sum, Currency currency, String date, String categoryName) {
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
+                    Category category = new Category(categoryName);
+                    CostItem item = new CostItem(0, description, sum, currency, date, category);
                     model.addCostItem(item);
                     view.showMessage("Cost item was added successfully");
                     CostItem[] items = model.getCostItems();
@@ -49,11 +48,12 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
-    public void addCategory(Category category) {
+    public void addCategory(String categoryName) {
         pool.submit(new Runnable() {
             @Override
             public void run() {
                 try {
+                    Category category = new Category(categoryName);
                     model.addCategory(category);
                     view.showMessage("Category was added successfully");
                     Category[] categories = model.getCategories();
@@ -82,7 +82,7 @@ public class ViewModel implements IViewModel {
 
                         for (CostItem item: items){
                             double oldVal = map.get(item.getCategory().getName());
-                            map.replace(item.getCategory().getName(), oldVal + item.getSum());
+                            map.replace(item.getCategory().getName(), oldVal + item.convertCurrencyToILS());
                         }
                         view.displayPieChart(map);
                     }else
@@ -111,7 +111,7 @@ public class ViewModel implements IViewModel {
 
                         for (CostItem item: items){
                             double oldVal = map.get(item.getCategory().getName());
-                            map.replace(item.getCategory().getName(), oldVal + item.getSum());
+                            map.replace(item.getCategory().getName(), oldVal + item.convertCurrencyToILS());
                         }
                         view.displayPieChart(map);
                     }
