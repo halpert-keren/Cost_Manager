@@ -17,7 +17,8 @@ public class DerbyDBModel implements IModel {
 
     /**
      * Sole constructor.
-     * Opens a DB connection and creates the tables (if they don't exist already), then closes the connection.
+     * Opens a DB connection and creates the tables (if they don't exist already),
+     * then closes the connection.
      *
      * @throws CostManagerException if could not execute DB query
      *                              or could not open or close the DB connection.
@@ -38,16 +39,16 @@ public class DerbyDBModel implements IModel {
 
             // execute SQL query - create tables
             statement.execute("create table Category(" +
-                    "id INT NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
-                    "name VARCHAR(50) UNIQUE)");
+                    "id INT NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                    + "name VARCHAR(50) UNIQUE)");
             statement.execute("create table CostItem(" +
-                    "id INT NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
-                    "description VARCHAR(200), " +
-                    "price FLOAT, " +
-                    "currency VARCHAR(5), " +
-                    "date_ DATE, " +
-                    "category VARCHAR(50), " +
-                    "FOREIGN KEY (category) REFERENCES Category(name))");
+                    "id INT NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                    + "description VARCHAR(200), "
+                    + "price FLOAT, "
+                    + "currency VARCHAR(5), "
+                    + "date_ DATE, "
+                    + "category VARCHAR(50), "
+                    + "FOREIGN KEY (category) REFERENCES Category(name))");
 
         } catch (SQLException e) {
             if ("X0Y32".equals(e.getSQLState())) {
@@ -90,9 +91,10 @@ public class DerbyDBModel implements IModel {
             statement = connection.createStatement();
 
             // execute SQL query - add new cost item
-            statement.executeUpdate("INSERT INTO CostItem (description, price, currency, date_, category) " +
-                    "VALUES('" + item.getDescription() + "'," + item.getSum() + ",'" + item.getCurrency().toString() +
-                    "','" + item.getDate() + "','" + item.getCategory().getName() + "')");
+            statement.executeUpdate("INSERT INTO CostItem (description, price, currency, date_, category)"
+                    + " VALUES('" + item.getDescription() + "'," + item.getSum() + ",'" +
+                    item.getCurrency().toString() + "','" + item.getDate() + "','" +
+                    item.getCategory().getName() + "')");
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException(e.getMessage(), e.getCause());

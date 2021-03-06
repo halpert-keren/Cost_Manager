@@ -440,7 +440,8 @@ public class View implements IView {
             // run the functionality of the action in an EDT thread so as not to cause backup
             if (SwingUtilities.isEventDispatchThread()) {
                 // create the table to display the cost items
-                String[] columnNames = {"No.", "ID", "Description", "Sum", "Currency", "Category", "Date"};
+                String[] columnNames = {"No.", "ID", "Description", "Sum",
+                        "Currency", "Category", "Date"};
                 String[][] rowData = new String[items.length][7];
                 rowData[0][0] = "No.";
                 rowData[0][1] = "ID";
@@ -475,7 +476,8 @@ public class View implements IView {
                     @Override
                     public void run() {
                         // create the table to display the cost items
-                        String[] columnNames = {"No.", "ID", "Description", "Sum", "Currency", "Category", "Date"};
+                        String[] columnNames = {"No.", "ID", "Description", "Sum",
+                                "Currency", "Category", "Date"};
                         String[][] rowData = new String[items.length][7];
                         rowData[0][0] = "No.";
                         rowData[0][1] = "ID";
@@ -550,8 +552,8 @@ public class View implements IView {
                 // create pie chart from map
                 DefaultPieDataset dataset = new DefaultPieDataset();
                 map.forEach((key, value) -> dataset.setValue(key.toString(), (Double) value));
-                JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)", dataset,
-                        true, false, false);
+                JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)",
+                        dataset, true, false, false);
                 pieChart.setBorderVisible(false);
                 ChartPanel pie = new ChartPanel(pieChart);
 
@@ -570,8 +572,8 @@ public class View implements IView {
                         // create pie chart from map
                         DefaultPieDataset dataset = new DefaultPieDataset();
                         map.forEach((key, value) -> dataset.setValue(key.toString(), (Double) value));
-                        JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)", dataset,
-                                true, false, false);
+                        JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)",
+                                dataset, true, false, false);
                         pieChart.setBorderVisible(false);
                         ChartPanel pie = new ChartPanel(pieChart);
 
