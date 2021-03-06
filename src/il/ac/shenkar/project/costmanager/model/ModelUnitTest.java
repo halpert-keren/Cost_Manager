@@ -10,13 +10,13 @@ public class ModelUnitTest {
         try {
             IModel model = new DerbyDBModel();
 
-            Category category = new Category("Clothes");
-//            model.addCategory(category);
+            Category c = new Category("Clothes");
+//            model.addCategory(c);
 
 //            Category[] categories = model.getCategories();
 //            System.out.println(categories[1].getName());
-            CostItem costItem = new CostItem(2, "test", 3.2, Currency.EURO, "2021-03-03", category);
-            model.addCostItem(costItem);
+            CostItem ci = new CostItem(2, "test", 3.2, Currency.EURO, "2021-03-03", c);
+            model.addCostItem(ci);
 
             CostItem[] costItems = model.getCostItems();
             System.out.println(costItems[1].getDescription());

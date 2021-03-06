@@ -550,7 +550,8 @@ public class View implements IView {
                 // create pie chart from map
                 DefaultPieDataset dataset = new DefaultPieDataset();
                 map.forEach((key, value) -> dataset.setValue(key.toString(), (Double) value));
-                JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)", dataset, true, false, false);
+                JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)", dataset,
+                        true, false, false);
                 pieChart.setBorderVisible(false);
                 ChartPanel pie = new ChartPanel(pieChart);
 
@@ -569,7 +570,8 @@ public class View implements IView {
                         // create pie chart from map
                         DefaultPieDataset dataset = new DefaultPieDataset();
                         map.forEach((key, value) -> dataset.setValue(key.toString(), (Double) value));
-                        JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)", dataset, true, false, false);
+                        JFreeChart pieChart = ChartFactory.createPieChart("Cost Divisions (in ILS)", dataset,
+                                true, false, false);
                         pieChart.setBorderVisible(false);
                         ChartPanel pie = new ChartPanel(pieChart);
 

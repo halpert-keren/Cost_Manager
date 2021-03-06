@@ -90,7 +90,9 @@ public class DerbyDBModel implements IModel {
             statement = connection.createStatement();
 
             // execute SQL query - add new cost item
-            statement.executeUpdate("INSERT INTO CostItem (description, price, currency, date_, category) VALUES('" + item.getDescription() + "'," + item.getSum() + ",'" + item.getCurrency().toString() + "','" + item.getDate() + "','" + item.getCategory().getName() + "')");
+            statement.executeUpdate("INSERT INTO CostItem (description, price, currency, date_, category) " +
+                    "VALUES('" + item.getDescription() + "'," + item.getSum() + ",'" + item.getCurrency().toString() +
+                    "','" + item.getDate() + "','" + item.getCategory().getName() + "')");
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new CostManagerException(e.getMessage(), e.getCause());
@@ -237,7 +239,9 @@ public class DerbyDBModel implements IModel {
             rs = statement.executeQuery("SELECT * FROM CostItem");
             int i = 0;
             while (rs.next()) {
-                costItems[i] = new CostItem(rs.getInt("id"), rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getString("date_"), new Category(rs.getString("category")));
+                costItems[i] = new CostItem(rs.getInt("id"), rs.getString("description"),
+                        rs.getDouble("price"), Currency.valueOf(rs.getString("currency")),
+                        rs.getString("date_"), new Category(rs.getString("category")));
                 i++;
             }
             return costItems;
@@ -282,14 +286,18 @@ public class DerbyDBModel implements IModel {
             statement = connection.createStatement();
 
             // execute SQL query - get cost items and create return array
-            rs = statement.executeQuery("SELECT * FROM CostItem WHERE date_ BETWEEN DATE('" + dateStart + "') and DATE('" + dateEnd + "')");
+            rs = statement.executeQuery("SELECT * FROM CostItem WHERE date_ " +
+                    "BETWEEN DATE('" + dateStart + "') and DATE('" + dateEnd + "')");
             int count = 0;
             while (rs.next()) count++;
             CostItem[] costItems = new CostItem[count];
-            rs = statement.executeQuery("SELECT * FROM CostItem WHERE date_ BETWEEN DATE('" + dateStart + "') and DATE('" + dateEnd + "')");
+            rs = statement.executeQuery("SELECT * FROM CostItem WHERE date_ " +
+                    "BETWEEN DATE('" + dateStart + "') and DATE('" + dateEnd + "')");
             int i = 0;
             while (rs.next()) {
-                costItems[i] = new CostItem(rs.getInt("id"), rs.getString("description"), rs.getDouble("price"), Currency.valueOf(rs.getString("currency")), rs.getString("date_"), new Category(rs.getString("category")));
+                costItems[i] = new CostItem(rs.getInt("id"), rs.getString("description"),
+                        rs.getDouble("price"), Currency.valueOf(rs.getString("currency")),
+                        rs.getString("date_"), new Category(rs.getString("category")));
                 i++;
             }
             return costItems;

@@ -29,7 +29,8 @@ public class CostItem {
      * @param date        indicates the date in which the expense was made.
      * @param category    indicates category that the cost item belongs to.
      */
-    public CostItem(int id, String description, double sum, Currency currency, String date, Category category) throws CostManagerException {
+    public CostItem(int id, String description, double sum, Currency currency, String date, Category category)
+            throws CostManagerException {
         try {
             setId(id);
             setDescription(description);
